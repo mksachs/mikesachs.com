@@ -65,3 +65,11 @@ target/
 /.idea/
 /texput.log
 /rwd/
+*.aux
+*.out
+*.synctex.gz
+TSWLatexianTemp*
+/tex/cover_letters
+/tex/old_cover_letters
+/tex/old_rounds
+.DS_Store
