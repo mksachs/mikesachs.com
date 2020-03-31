@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-from __future__ import print_function
-
 import sys
 import argparse
 import re
@@ -49,7 +46,6 @@ def create_bib_item(bib_item_node):
                     content_str += '%s'%(latex_escape(child.get_text(strip=True), abbrev=True))
             elif child.name == 'br':
                 content_str += '\\\\ \r'
-            #print child.name
         elif type(child) is bs4.element.NavigableString:
             try:
                 char = child.encode('ascii', 'xmlcharrefreplace').strip().split()[0]
@@ -85,10 +81,10 @@ def main(argv=None):
     skip_sections = ['examples']
 
     if args.print_ver:
-        xetex_template_f = open('../tex/template_print.xetex')
+        xetex_template_f = open('../tex/templates/template_print.xetex')
         skip_sections.append('conferences')
     else:
-        xetex_template_f = open('../tex/template_web.xetex')
+        xetex_template_f = open('../tex/templates/template_web.xetex')
 
     if args.min:
         skip_sections.append('publications')
@@ -105,7 +101,6 @@ def main(argv=None):
 
     soup = BeautifulSoup(html_f.read(), 'html.parser')
 
-    #column1 = soup.find_all(id='column1')
     content = soup('div', {'class':'content'})
     xetex_output = [xetex_template[0]]
 

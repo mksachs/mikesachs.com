@@ -68,3 +68,4 @@ target/
 /tex/*
 !/tex/templates
 .DS_Store
+/cover_letters/
