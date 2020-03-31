@@ -1,282 +1,0 @@
-\documentclass[9pt,oneside]{amsart}
-
-\usepackage{fontspec}% provides font selecting commands
-\usepackage{xunicode}% provides unicode character macros
-\usepackage{xltxtra} % provides some fixes/extras
-
-\setmainfont[Mapping=tex-text]{Futura T Book}
-\setmonofont[Scale=0.89]{Futura T Book}
-
-\newfontface\titlefont[LetterSpace=4.0]{Futura T Light}
-\newfontface\boldfont[]{Futura T Demi}
-\newfontface\italicfont[]{Futura T Book Oblique}
-
-\newcommand{\thename}[1]
-{
-	{\Huge {\titlefont #1}}
-	\vspace{\baselineskip}
-}
-
-\newcommand{\sectiontitle}[1]
-{
-	{\Huge {\titlefont #1}}
-	\vspace{\baselineskip}
-}
-
-\newcommand{\subsectiontitle}[1]
-{
-	{\LARGE {\titlefont #1}}
-	\vspace{\baselineskip}
-}
-
-\renewcommand{\bf}[1]
-{
-	{\boldfont #1}
-}
-
-\renewcommand{\it}[1]
-{
-	{\italicfont #1}
-}
-
-\newfontface\bulletfont{Futura T Book}
-\def \listbullet {-}
-
-% This is a helpful package that puts math inside length specifications
-\usepackage{calc}
-
-% Simpler bibsection for CV sections
-% (thanks to natbib for inspiration)
-\makeatletter
-\newlength{\bibhang}
-\setlength{\bibhang}{1em}
-\newlength{\bibsep}
- {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
-\newenvironment{lonebibsection}%
-        {\vspace{.2\baselineskip}\begin{list}{}{%
-       \setlength{\leftmargin}{\bibhang}%
-       %\setlength{\itemindent}{\leftmargin}%
-       \setlength{\itemsep}{10pt}%
-       \setlength{\parsep}{\z@}%
-        \setlength{\partopsep}{0pt}%
-        \setlength{\topsep}{0pt}}}
-        {\end{list}\vspace{-.6\baselineskip}}
-\newenvironment{bibsection}%
-        {\vspace{-.5\baselineskip}\begin{list}{}{%
-       \setlength{\leftmargin}{\bibhang}%
-       \setlength{\itemsep}{8pt}%
-       \setlength{\parsep}{\z@}%
-        \setlength{\partopsep}{0pt}%
-        \setlength{\topsep}{0pt}}}
-        {\end{list}\vspace{.4\baselineskip}}
-\makeatother
-
-% Layout: Puts the section titles on left side of page
-\reversemarginpar
-
-%% Use these lines for letter-sized paper
-\usepackage[paper=letterpaper,
-            %includefoot, % Uncomment to put page number above margin
-            marginparwidth=1.6in,     % Length of section titles
-            marginparsep=.1in,       % Space between titles and text
-            margin=1in,               % 1 inch margins
-            includemp]{geometry}
-
-%% More layout: Get rid of indenting throughout entire document
-\setlength{\parindent}{0in}
-
-%% This gives us fun enumeration environments. compactitem will be nice.
-\usepackage{paralist}
-
-%% Reference the last page in the page number
-%
-% NOTE: comment the +LP line and uncomment the -LP line to have page
-%       numbers without the ``of ##'' last page reference)
-%
-% NOTE: uncomment the \pagestyle{empty} line to get rid of all page
-%       numbers (make sure includefoot is commented out above)
-%
-\usepackage{fancyhdr,lastpage}
-\pagestyle{empty}      % Uncomment this to get rid of page numbers
-
-% Finally, give us PDF bookmarks
-\usepackage[breaklinks=true]{hyperref}
-%\definecolor{orange}{rgb}{0.3,0.3,0.3}
-%\hypersetup{colorlinks,breaklinks,
-%            linkcolor=orange,urlcolor=orange,
-%            anchorcolor=orange,citecolor=orange}
-
-\usepackage{ifthen}
-%%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%% Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% The title (name) with a horizontal rule under it
-%
-% Usage: \makeheading{name}{line 1}...{line n}
-%
-% Place at top of document. It should be the first thing.
-\newcommand{\makeheading}[7]
-{
-	\marginpar{
-		\thename{#1}\\
-		{\titlefont
-        \href{#2}{#3}\\
-		\href{mailto:#4}{#4}\\
-		% \href{mailto:#5}{#5}\\
-        #5\\	}
-	}
-}
-
-
-
-\renewcommand{\section}[1]
-{
-	\pagebreak[2]
-	\phantomsection\addcontentsline{toc}{section}{#1}
-    \sectiontitle{#1}
-         
-        
-}
-
-\renewcommand{\subsection}[2]
-{
-	\pagebreak[3]
-	\ifthenelse{\equal{#2}{}}{
-		\subsectiontitle{#1}
-	}{
-		\href{#2}{ \subsectiontitle{#1}}
-	}
-}
-
-% The section headings
-%
-% Usage: \section{section name}
-%
-% Follow this section IMMEDIATELY with the first line of the section
-% text. Do not put whitespace in between. That is, do this:
-%
-%       \section{My Information}
-%       Here is my information.
-%
-% and NOT this:
-%
-%       \section{My Information}
-%
-%       Here is my information.
-%
-% Otherwise the top of the section header will not line up with the top
-% of the section. Of course, using a single comment character (%) on
-% empty lines allows for the function of the first example with the
-% readability of the second example.
-
-% An itemize-style list with lots of space between items
-\newenvironment{outerlist}[1][\enskip\textbullet]%
-        {\vspace{-\baselineskip}\begin{itemize}[#1]}{\end{itemize}%
-         \vspace{-.6\baselineskip}}
-
-% An environment IDENTICAL to outerlist that has better pre-list spacing
-% when used as the first thing in a \section
-\newenvironment{lonelist}[1][\enskip\textbullet]%
-        {\vspace{-\baselineskip}\begin{list}{#1}{%
-        \setlength{\partopsep}{0pt}%
-        \setlength{\topsep}{0pt}}}
-        {\end{list}\vspace{-.6\baselineskip}}
-
-% An itemize-style list with little space between items
-\newenvironment{innerlist}[1][\enskip\listbullet]%
-        {\begin{compactitem}[#1]}{\end{compactitem}}
-
-% An environment IDENTICAL to innerlist that has better pre-list spacing
-% when used as the first thing in a \section
-\newenvironment{loneinnerlist}[1][\enskip\listbullet]%
-        {\vspace{-\baselineskip}\begin{compactitem}[#1]}
-        {\end{compactitem}\vspace{-.6\baselineskip}}
-
-% To add some paragraph space between lines.
-% This also tells LaTeX to preferably break a page on one of these gaps
-% if there is a needed pagebreak nearby.
-\newcommand{\blankline}{\quad\pagebreak[2]}
-
-% Uses hyperref to link DOI
-\newcommand\doilink[1]{\href{http://dx.doi.org/#1}{#1}}
-\newcommand\doi[1]{doi:\doilink{#1}}
-
-% Uses hyperref to link arxix
-\newcommand\adoilink[1]{\href{http://arxiv.org/#1}{#1}}
-\newcommand\arxiv[1]{arxiv:\adoilink{#1}}
-
-% For \url{SOME_URL}, links SOME_URL to the url SOME_URL
-\providecommand*\url[1]{\href{#1}{#1}}
-% Same as above, but pretty-prints SOME_URL in teletype fixed-width font
-\renewcommand*\url[1]{\href{#1}{\texttt{#1}}}
-
-% For \email{ADDRESS}, links ADDRESS to the url mailto:ADDRESS
-\providecommand*\email[1]{\href{mailto:#1}{#1}}
-% Same as above, but pretty-prints ADDRESS in teletype fixed-width font
-%\renewcommand*\email[1]{\href{mailto:#1}{\texttt{#1}}}
-
-%%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{document}
-\makeheading{Michael Sachs}
-    {http://www.mikesachs.com}
-    {www.mikesachs.com}
-	{mike@mikesachs.com}
-    % {mksachs@ucdavis.edu}
-    {646.262.8530}
-
-%\thispagestyle{empty}
-
-I am a data scientist, physicist and visual designer who is interested in the stories data 
-                            can tell. I have managed teams, been part of technology start-ups, and consulted with 
-                            companies both large and small. My work has been published in scientific journals, covered 
-                            by the popular science press, and I have given talks at scientific conferences in Hawaii, 
-                            Singapore, San Francisco, Santa Fe and New York. I studied physics at 
-                            Columbia University and the 
-                            University of California, Davis, and visual 
-                            design at Virginia Commonwealth University. 
-                            I am a 
-                            NASA Earth and Space Science fellow and a 
-                            Santa Fe 
-                                Institute Complex Systems Summer School alumni, and currently data science manager at Radius Intelligence in San Francisco.\vspace{2.0\baselineskip}\section{Technologies}\subsection{Languages}{}\begin{outerlist}\item[] python, C, C++, HTML, CSS, JavaScript, Java, php, SQL, CQL, bash shell scripting, Objective C, IDL, Mathematica, MatLab, lisp, ActionScript\end{outerlist}\vspace{\baselineskip}\subsection{Applications, Modules and Libraries}{}\begin{outerlist}\item[] Spark, Databricks, MySQL, Numpy, scikit-learn, scipy, celery, SQLAlchemy, Cassandra, Redshift, D3.js, boto, EC2, Flask, HDF5, Django, Matplotlib, JQuery, PIL, Ajax, Hadoop, WordPress, MPI, Mathematica, HEALPix, GeoFEST, LaGriT, Polspice,\end{outerlist}\vspace{\baselineskip}\subsection{Operating Systems}{}\begin{outerlist}\item[] Mac OS X, Linux, Windows\end{outerlist}\vspace{\baselineskip}\vspace{2.0\baselineskip}\section{Professional Experience}\subsection{Radius Intelligence}{http://radius.com/}\begin{outerlist}\item[] Data Science Lead \hfill {March 2017 to Present}\begin{innerlist}\item Building a team of data scientists engaged in expanding and
-                                    exploring The Network of Record: the most accurate, comprehensive and up-to-date B2B
-                                    data. Our goal: to find novel ways to deliver real value to our customers.
-                                \end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Discovery Digital Networks}{http://www.discoverydigitalnetworks.com/}\begin{outerlist}\item[] Director of Data Science and Technology \hfill {February 2016 to March 2017}\begin{innerlist}\item Created a robust data science platform to support data collection, distribution 
-                                and analysis across multiple Discovery Communications brands including: The Discovery 
-                                Channel, Animal Planet and The Science Channel. At its peak this platform was ingesting 
-                                and analyzing over 500 million rows of data per day.\item Working with stakeholders at Discovery corporate, advised a company wide data
-                                working group tasked with creating a corporate data strategy.\item Analyzed the performance impact of new products on Facebook and YouTube.\item Led the competitive analysis of potential corporate acquisitions.\item Created flexible data dashboards which delivered performance data
-                                on hundreds of distribution sources including YouTube channels, Facebook pages, owned 
-                                and operated web sites, and Freewheel ad services.\item Developed a time-series forecasting algorithm based on the notion of a directed
-                                random walk, and deployed the results of this algorithm to corporate dashboards.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Discovery Digital Networks}{http://www.discoverydigitalnetworks.com/}\begin{outerlist}\item[] Director of Technology and Data \hfill {September 2014 to February 2016}\begin{innerlist}\item Led a group of software architects, web engineers, and apps engineers in
-                                implementing and maintaining a suite of online properties with a total of approximately
-                                2 million unique users per month and a data collection, reporting and analytics
-                                infrastructure storing information about tens of thousands of video assets across dozens
-                                of distribution platforms.\item Directed the design, implementation, and deployment of a modern RESTful web
-                                architecture, using Lumen, React and Node.js, which replaced an 8 year old legacy PHP
-                                framework. The finished architecture more than halved the page delivery and rendering
-                                time, and resulted in vastly improved stability and development time.\item Led the migration of all of Discovery Digital Networks web and data
-                                infrastructure to Amazon Web Services.\item Led the successful development and deployment of \href{http://www.seekernetwork.com/}{seekernetwork.com},
-                                an online video network featuring original content focused on travel and adventure.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Discovery Digital Networks}{http://www.discoverydigitalnetworks.com/}\begin{outerlist}\item[] Data Scientist \hfill {April 2014 to September 2014}\begin{innerlist}\item Developed enterprise level software designed to collect and process video usage
-                                data across multiple distribution channels. This software reliably collects daily data
-                                from over two gigabytes of log files and over 30,000 api calls and consolidates it into
-                                a single data warehouse.\item Created a forecasting algorithm to predict the 30 day performance of new videos,
-                                and processes to produce daily forecasts for all videos under 30 days old. After 15 days,
-                                95\% of the predictions made by the algorithm were within 10\% of the actuals.\item Using machine learning categorization algorithms, developed a tool that uses
-                                past video performance to help producers create better video titles. The tool
-                                automatically selects the best algorithm and external parameters, and creates new models
-                                daily. The best case model guessed the correct answer around 80\% of the time, while the
-                                worst case was still better than chance at around 56\%.\item Created a process which continuously polls the YouTube and Facebook APIs to
-                                collect high-frequency view data for all published videos under 30 days old. The
-                                resulting data is stored in a Cassandra database and allows producers and audience
-                                development to react quickly to ensure videos success.\item Developed RESTful API endpoints using Python and Flask to deliver all analytics
-                                data to end users and applications.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Department of Physics, University of California, Davis}{http://www.physics.ucdavis.edu/}\begin{outerlist}\item[] Researcher \hfill {April 2008 to April 2014}\begin{innerlist}\item Working under Professors John Rundle and Donald Turcotte, developed, extended and analyzed Virtual California, a computer simulation of the earthquake fault systems in California and analyzed the results of the Regional Earthquake Likelihood Models earthquake forecasting results.\item Working under Professor Steve Carlip, developed a method of testing various properties of 2+1-dimensional spacetimes which emerge from causal dynamical triangulations, a lattice approach to approximating the gravitational path integral.\item Working under Professor David Wittman, analyzed weak gravitational lensing observations using wavelet techniques.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Department of Astronomy and Astrophysics, Columbia University}{http://www.astro.columbia.edu/}\begin{outerlist}\item[] Research Assistant \hfill {May 2006 to September 2006}\begin{innerlist}\item Modeled the effects of dust contamination on Wolter type x-ray optics.\item Presented preliminary results at Columbia University's "Astrofest" in September 2006.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Mikesachs.com}{http://www.mikesachs.com}\begin{outerlist}\item[] Founder/Principal \hfill {January 2005 to September 2007}\begin{innerlist}\item Created compelling web experiences for a diverse set of organizations.\item Successful completion of five major projects for a variety of organizations including the \href{http://www.theadvertisingclub.org}{New York Ad Club} and \href{http://www.fountainhouse.org}{Fountain House.}\item Enabled small organizations to take control of their web presence.\item Collaborated with designers and subcontractors to deliver on client requirements.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Weill Cornell Medical College/NewYork-Presbyterian Hospital}{http://www.med.cornell.edu/}\begin{outerlist}\item[] Web Project Manager/Senior Web Designer \hfill {June 2002 to January 2005}\begin{innerlist}\item Led the successful completion of over 30 websites for both Weill Cornell Medical College and NewYork-Presbyterian Hospital.\item Led the development of institutionalized IT project management within Weill Cornell Medical College.\item Improved the web development process by integrating project management, source control and reusable design components.\item Collaborated with NewYork-Presbyterian Hospital marketing and Weill Cornell Medical College directors to solve business problems on the web.\item Supported Weill Cornell Medical College Geriatric Division in completing grant audits.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Xperts Inc.}{http://www.xperts.com/}\begin{outerlist}\item[] Creative Director/Lead Designer \hfill {March 1997 to June 2002}\begin{innerlist}\item Designed and implemented user interface strategies for over 30 companies in market sectors ranging from healthcare and education to broadband and packaged consumer goods.\item Led an award-winning team of designers and user interface engineers through mentoring, selective hiring, and the development of management systems.\item Guided the development of Xperts software design methodology in collaboration with other company executives.\item Facilitated the acquisition of new business by developing sales strategies, project estimates and bid presentations.\item Directed the organizational wide acceptance of new user interface and design technologies.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Letterbrain.com}{}\begin{outerlist}\item[] Co-founder \hfill {May 1999 to October 2000}\begin{innerlist}\item Partner and co-creator of an Internet-based business conceived to leverage web technologies in easing the process of traditional paper-based correspondence.\item Designed and developed an innovative WYSIWYG letter writing web interface using Flash 4 and Generator 2.\item Created the visual identity for the Letterbrain.com brand.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\vspace{2.0\baselineskip}\section{Education}\subsection{University of California, Davis}{http://www.ucdavis.edu/}\begin{outerlist}\item[] Completed physics PhD, 2013\begin{innerlist}\item Adviser: Professor \href{http://physics.ucdavis.edu/~rundle/}{John B. Rundle}\item Area of Study: Computational physics and complex systems\item Previous Adviser: Professor \href{http://goober.ucdavis.edu/Text/Carlip.html}{Steve Carlip}\item Previous Area of Study: Quantum gravity\item Course work completed with a 3.87 GPA\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Columbia University}{http://www.columbia.edu}\begin{outerlist}\item[] Completed undergraduate physics curriculum, 2007\begin{innerlist}\item 3.99 GPA\end{innerlist}\end{outerlist}\vspace{\baselineskip}\subsection{Virginia Commonwealth University}{http://www.vcu.edu}\begin{outerlist}\item[] Bachelor of Fine Arts, Graphic Design, School of the Arts, 1995\begin{innerlist}\item Tied for \#1 public university school of arts and design in the country (\#4 among public \& private institutions) by U.S. News \& World Report (2015).\item 3.24 GPA\end{innerlist}\end{outerlist}\vspace{\baselineskip}\vspace{2.0\baselineskip}\section{Publications}\begin{bibsection}\item \it{\href{http://dx.doi.org/10.1007/s00024-016-1428-3}{Parametrizing Physics-Based Earthquake Simulations}}\\ K.~W.~Schultz,  M.~R.~Yoder, J.~M.~Wilson, E.~M.~Heien, \bf{M.~K.~Sachs}, J.~B.~Rundle, and D.~L.~Turcotte\\ Pure and Applied Geophysics (2016)\item \it{\href{http://link.springer.com/chapter/10.1007/1345\_2015\_134}{Virtual Quake: Statistics, Co-Seismic Deformations and Gravity Changes for Driven Earthquake Fault Systems}}\\ K.~W.~Schultz, \bf{M.~K.~Sachs}, E.~M.~Heien, M.~R.~Yoder, J.~B.~Rundle, D.~L.~Turcotte, and A.~Donnellan\\ International Symposium on Geodesy for Earthquake and Natural Hazards (GENAH) 145 29-37 (2015)\item \it{\href{http://link.springer.com/article/10.1007\%2Fs00024-014-0926-4}{Simulating Gravity Changes in Topologically Realistic Driven Earthquake Fault Systems: First Results}}\\ K.~W.~Schultz, \bf{M.~K.~Sachs}, E.~M.~Heien, J.~B.~Rundle, D.~L.~Turcotte, and A.~Donnellan\\ Pure and Applied Geophysics In press (2014)\item \it{\href{http://openacademicpress.de/ojs2/index.php/socs}{Self-Organizing Complex Earthquakes: Scaling in Data, Models, and Forecasting}}\\  \bf{M.~K.~Sachs}, J.~B.~Rundle, J.~R.~Holliday, J.~Gran, M.~Yoder and W.~Graves\\ "Self-Organized Criticality Systems" Open Academic Press (2013)\item \it{\href{http://dx.doi.org/10.1785/0220120094}{A Comparison among Observations and Earthquake Simulator Results for the allcal2 California Fault Model}}\\ T.~E.~Tullis, K.~Richards-Dinger, M.~Barall, J.~H.~Dieterich, E.~H.~Field, E.~M.~Heien, L.~H.~Kellogg, F.~Pollitz, J.~B.~Rundle, \bf{M.~K.~Sachs}, D.~L.~Turcotte, S.~N.~Ward and M.~B.~Yikilmaz\\ Seismological Research Letters 83 994-1006 (2012)\item \it{\href{http://dx.doi.org/10.1785/0220120093}{Generic Earthquake Simulator}}\\ T.~E.~Tullis, K.~Richards-Dinger, M.~Barall, J.~H.~Dieterich, E.~H.~Field, E.~M.~Heien, L.~H.~Kellogg, F.~Pollitz, J.~B.~Rundle, \bf{M.~K.~Sachs}, D.~L.~Turcotte, S.~N.~Ward and M.~B.~Yikilmaz\\ Seismological Research Letters 83 959-963 (2012)\item \it{\href{http://dx.doi.org/10.1785/0220120052}{Virtual California Earthquake Simulator}}\\  \bf{M.~K.~Sachs}, E.~M.~Heien, D.~L.~Turcotte, M.~B.~Yikilmaz, J.~B.~Rundle and L.~H.~Kellogg\\ Seismological Research Letters 83 973-978 (2012)\item \it{\href{http://dx.doi.org/10.1109/MCSE.2012.87}{Forecasting Earthquakes: The RELM Test}}\\  \bf{M.~K.~Sachs}, D.~L.~Turcotte, J.~R.~Holliday and J.~B.~Rundle\\ Computing in Science and Engineering 14 43 (2012)\item \it{\href{http://dx.doi.org/10.1109/MCSE.2012.39}{Understanding Long-Term Earthquake Behavior through Simulation}}\\ E.~M.~Heien and \bf{M.~K.~Sachs}\\ Computing in Science and Engineering 14 10 (2012)\item \it{\href{http://dx.doi.org/10.1140/epjst/e2012-01569-3}{Black swans, power laws, and dragon-kings: Earthquakes, volcanic eruptions, landslides, wildfires, floods, and SOC models}}\\  \bf{M.~K.~Sachs}, M.~R.~Yoder, D.~L.~Turcotte, J.~B.~Rundle and B.~D.~Malamud\\ European Physical Journal Special Topics 205 167-182 (2012)\item \it{\href{http://dx.doi.org/10.4081/rg.2012.e10}{Implications of the RELM test of earthquake forecasts in California}}\\  \bf{M.~K.~Sachs}, Y.~T.~Lee, D.~L.~Turcotte, J.~R.~Holliday and J.~B.~Rundle\\ Research in Geophysics 2 e10 (2012)\item \it{\href{http://dx.doi.org/10.1155/2012/543482}{Evaluating the RELM test results}}\\  \bf{M.~K.~Sachs}, Y.~T.~Lee, D.~L.~Turcotte, J.~R.~Holliday and J.~B.~Rundle\\ International Journal of Geophysics 2012 (2012)\item \it{\href{http://dx.doi.org/10.1111/j.1365-246X.2011.05134.x}{Earthquake precursors: activation or quiescence?}}\\ J.~B.~Rundle, J.~R.~Holliday, M.~Yoder, \bf{M.~K.~Sachs}, A.~Donnellan, D.~L.~Turcotte, K.~F.~Tiampo, W.~Klein and L.~H.~Kellogg\\ Geophysical Journal International 187 225-236 (2011)\item \it{\href{http://dx.doi.org/10.1073/pnas.1113481108}{Results of the Regional Earthquake Likelihood Models (RELM) test of earthquake forecasts in California}}\\ Y.~T.~Lee, D.~L.~Turcotte, J.~R.~Holliday, \bf{M.~K.~Sachs}, J.~B.~Rundle, C.~C.~Chen and K.~F.~Tiampo\\ Proceedings of the National Academy of Sciences (USA) 108 16533-16538 (2011)\item \it{\href{http://arxiv.org/abs/1110.6880}{Testing Lattice Quantum Gravity in 2+1 Dimensions}}\\  \bf{M.~K.~Sachs}\\ arXiv:1110.6880 [gr-qc] (2011)\end{bibsection}\vspace{2.0\baselineskip}\section{Awards and Recognition}\begin{loneinnerlist}\item Three time Discovery D-Lighter award winner\item 2014 and 2015 Discovery Digital Networks Hackathon winner\item 2011 NASA Earth and Space Science Fellowship\item 2011 Santa Fe Institute Complex Systems Summer School\item Member of the Golden Key International Honor Society\item Interactive Best in Show, Richmond Ad Show 2004: AdCenter Website\item 10 eHealthcare Leadership Awards including 2 Platinum Awards for work done on the Weill Cornell Medical College Environmental Geriatrics Continuing Medical Education Application 2002-2005\item Artwork exhibited in the 2002 Paperveins Museum of Art Biennial at the Here Arts Center in New York City\item Xperts Employee of the Month May 1999, June 2001, August 2001\item Addy Award: Xperts Self Promotional Website 2000\item Xperts Outstanding Engineering Sales Support December 1999\item Xperts Excellence in Engineering Award August 1999\item 9 Xperts customer service awards 1997-2002\end{loneinnerlist}\vspace{2.0\baselineskip}\section{Teaching Experience}\subsection{Department of Physics, University of California, Davis}{http://www.physics.ucdavis.edu/}\begin{outerlist}\item[] Associate Instructor \hfill {January 2010 to July 2010}\begin{innerlist}\item Developed ten weeks of lectures for introductory undergraduate physics.\item Led weekly lectures to 250+ students.\item Created quizzes and exams.\item Organized small groups graduate teaching assistants to assist in grading and interacting with students.\end{innerlist}\item[] Teaching Assistant \hfill {September 2007 to September 2010}\begin{innerlist}\item Led discussion lab of more than 30 students.\end{innerlist}\end{outerlist}\vspace{\baselineskip}\vspace{2.0\baselineskip}\section{Press}\subsection{scientificamerican.com}{}\begin{outerlist}\item[] Test Pits Earthquake Forecasts against Each Other : \\ \url{http://www.scientificamerican.com/article.cfm?id=test-pits-earthquake-forecasts}\end{outerlist}\vspace{\baselineskip}\subsection{msnbc.com}{}\begin{outerlist}\item[] Flagging quake hotspots an inexact science : \\ \url{http://www.msnbc.msn.com/id/44676488/ns/technology\_and\_science-science/\#.TrB2c2B8tjB}\end{outerlist}\vspace{\baselineskip}\subsection{UCDavis News}{}\begin{outerlist}\item[] Assessing California earthquake forecasts : \\ \url{http://www.news.ucdavis.edu/search/news\_detail.lasso?id=10025}\end{outerlist}\vspace{\baselineskip}\subsection{NASA}{}\begin{outerlist}\item[] Managing the Deluge of 'Big Data' From Space : \\ \url{http://www.jpl.nasa.gov/news/news.php?release=2013-299}\item[] QuakeSim and NASA Mobile App Win NASA Software Award : \\ \url{http://www.nasa.gov/topics/earth/features/quakesim20120920.html}\end{outerlist}\vspace{\baselineskip}\vspace{2.0\baselineskip}
-
-\end{document}
-
-%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
