@@ -52,7 +52,7 @@ def create_bib_item(bib_item_node):
             #print child.name
         elif type(child) is bs4.element.NavigableString:
             try:
-                char = unicode(child).encode('ascii', 'xmlcharrefreplace').strip().split()[0]
+                char = child.encode('ascii', 'xmlcharrefreplace').strip().split()[0]
             except IndexError:
                 char = None
             if char == '&#160;':
@@ -69,10 +69,15 @@ def main(argv=None):
     
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-w', '--web', help='Create the web version of the pdf resume. If no args are supplied this is the default action.',
-                    action='store_true')
+    group.add_argument(
+        '-w', '--web',
+        help='Create the web version of the pdf resume. If no args are supplied this is the default action.',
+        action='store_true'
+    )
     group.add_argument('-p', '--print', dest='print_ver', help='Create the print version of the pdf resume.',
                     action='store_true')
+    parser.add_argument('-m', '--min', dest='min', help='Create a mini version of the resume.',
+                       action='store_true')
     args = parser.parse_args()
 
     html_f = open('../index.html')
@@ -84,7 +89,16 @@ def main(argv=None):
         skip_sections.append('conferences')
     else:
         xetex_template_f = open('../tex/template_web.xetex')
-    
+
+    if args.min:
+        skip_sections.append('publications')
+        skip_sections.append('awards_and_recognition')
+        skip_sections.append('teaching_experience')
+        skip_sections.append('press')
+        skip_sections.append('conferences')
+
+    skip_sections = list(set(skip_sections))
+
     resume_text_f = open('../resume.txt', 'w')
     
     xetex_template = xetex_template_f.read().split('%%%%%%%%%%%%%%%%%%%%%%%%% Content Here %%%%%%%%%%%%%%%%%%%%%%%%%%%%')
@@ -101,7 +115,7 @@ def main(argv=None):
         
         if section_id not in skip_sections:
             print(section_id)
-            resume_text_f.write('\r' + section_title.encode('utf8') + '\r')
+            resume_text_f.write('\r' + section_title + '\r')
             
             if section_id != 'summary':
                 xetex_output.append('\\section{%s}'%section_title)
@@ -168,7 +182,7 @@ def main(argv=None):
                                 xetex_output.append('\\subsection{%s}{%s}' % (latex_escape(subsection_title), subsection_href))
                                 xetex_output.append('\\begin{outerlist}')
                             elif child.name == 'p':
-                                outerlist_item = unicode(child.contents[0]).strip()
+                                outerlist_item = child.contents[0].strip()
                                 resume_text_f.write(re.sub(r'\s+', ' ', latex_escape(outerlist_item)) + '\r')
                                 xetex_output.append('\\item[] %s' % (latex_escape(outerlist_item)))
                                 outerlist_hfil_tag = child.find('span')
@@ -216,7 +230,7 @@ def main(argv=None):
         out_f = open('../tex/pdf_web.xetex','w')
 
     for i in xetex_output:
-        out_f.write(i.encode('utf8') + '\r')
+        out_f.write(i + '\r')
 
     out_f.close()
     html_f.close()
