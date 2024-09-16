@@ -1,4 +1,4 @@
-/*@font-face {
+@font-face {
     font-family: 'FuturaT-Bold';
     src: url('FuturaT-Bold.eot');
     src: url('FuturaT-Bold.woff') format('woff'),
@@ -18,7 +18,7 @@
     font-weight: normal;
     font-style: normal;
 
-}*/
+}
 
 @font-face {
     font-family: 'FuturaT-Book';
@@ -53,7 +53,7 @@
 
 }
 
-/*@font-face {
+@font-face {
     font-family: 'FuturaT-DemiOblique';
     src: url('FuturaT-DemiOblique.eot');
     src: url('FuturaT-DemiOblique.woff') format('woff'),
@@ -84,7 +84,7 @@
     font-weight: normal;
     font-style: normal;
 
-}*/
+}
 
 @font-face {
     font-family: 'FuturaT-Light';
@@ -98,7 +98,7 @@
 
 }
 
-/*@font-face {
+@font-face {
     font-family: 'FuturaT-LightOblique';
     src: url('FuturaT-LightOblique.eot');
     src: url('FuturaT-LightOblique.woff') format('woff'),
@@ -129,5 +129,5 @@
     font-weight: normal;
     font-style: normal;
 
-}*/
+}
 
