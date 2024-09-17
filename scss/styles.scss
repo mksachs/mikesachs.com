@@ -1,0 +1,158 @@
+// Override Bootstrap's Sass default variables
+//
+// Nearly all variables in Bootstrap are written with the `!default` flag.
+// This allows you to override the default values of those variables before
+// you import Bootstrap's source Sass files.
+//
+// Overriding the default variable values is the best way to customize your
+// CSS without writing _new_ styles. For example, you can either change
+// `$body-color` or write more CSS that override's Bootstrap's CSS like so:
+// `body { color: red; }`.
+
+
+//
+// Bring in Bootstrap
+//
+
+// Option 1
+//
+// Import all of Bootstrap's CSS
+
+// @import "bootstrap/scss/bootstrap";
+
+// Option 2
+//
+// Place variable overrides first, then import just the styles you need. Note that some stylesheets are required no matter what.
+
+// Toggle global options
+$enable-gradients: true;
+$enable-shadows: true;
+
+$offcanvas-box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175);
+
+$primary:       #FD5A1E;
+
+// Include functions first
+@import "bootstrap/scss/functions";
+
+// Customize some defaults
+$font-family-sans-serif: "FuturaT-Light";
+$headings-font-family: "FuturaT-DemiOblique";
+
+// Required
+@import "bootstrap/scss/variables";
+
+$custom-spacer: (
+        1: $spacer * .25,
+        2: $spacer * .5,
+        3: $spacer * 1,
+        4: $spacer * 1.25,
+        5: $spacer * 1.5,
+        6: $spacer * 1.75,
+        7: $spacer * 2,
+        8: $spacer * 2.25,
+        9: $spacer * 2.75,
+        10: $spacer * 3,
+        11: $spacer * 4,
+        12: $spacer * 10,
+        13: $spacer * 11
+);
+$spacers: map-merge($spacers, $custom-spacer);
+
+$h1-font-size:                $font-size-base * 2.5;
+$h2-font-size:                $font-size-base * 1.75;
+$h3-font-size:                $font-size-base;
+$h4-font-size:                $font-size-base;
+$h5-font-size:                $font-size-base;
+$h6-font-size:                $font-size-base;
+
+$font-sizes: (
+  1: $h1-font-size,
+  2: $h2-font-size,
+  3: $h3-font-size,
+  4: $h4-font-size,
+  5: $h5-font-size,
+  6: $h6-font-size
+);
+
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+
+@import "bootstrap/scss/type";
+// @import "bootstrap/scss/images";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+// @import "bootstrap/scss/tables";
+// @import "bootstrap/scss/forms";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/dropdown";
+// @import "bootstrap/scss/button-group";
+// @import "bootstrap/scss/nav";
+// @import "bootstrap/scss/navbar"; // Requires nav
+// @import "bootstrap/scss/card";
+// @import "bootstrap/scss/breadcrumb";
+// @import "bootstrap/scss/accordion";
+// @import "bootstrap/scss/pagination";
+// @import "bootstrap/scss/badge";
+// @import "bootstrap/scss/alert";
+// @import "bootstrap/scss/progress";
+// @import "bootstrap/scss/list-group";
+@import "bootstrap/scss/close";
+// @import "bootstrap/scss/toasts";
+@import "bootstrap/scss/modal"; // Requires transitions
+// @import "bootstrap/scss/tooltip";
+@import "bootstrap/scss/popover";
+// @import "bootstrap/scss/carousel";
+// @import "bootstrap/scss/spinners";
+@import "bootstrap/scss/offcanvas"; // Requires transitions
+// @import "bootstrap/scss/placeholders";
+
+// Helpers
+// @import "bootstrap/scss/helpers";
+
+// Utilities
+@import "bootstrap/scss/utilities/api";
+
+
+//
+// Custom styles
+//
+
+@import "icon-list";
+
+.section {
+  @extend .mb-11;
+}
+
+.subsection {
+  @extend .mt-9;
+}
+
+.job h2.company {
+  @extend .mb-5
+}
+
+.job p.description {
+  @extend .mt-5
+}
+
+.publication .title {
+  font-family: FuturaT-DemiOblique;
+}
+
+h3 {
+  font-family: FuturaT-BookOblique;
+}
+
+strong {
+  font-family: FuturaT-Demi;
+  font-weight: normal;
+}
+//body {
+//  padding: 1.5rem;
+//}
