@@ -20,39 +20,42 @@ CVNav.prototype.build_item_list = function() {
 };
 
 CVNav.prototype.do_nav = function(index) {
-    this.CVNavItems[0].unselect();
-    this.do_scroll(index);
-    //this.selected = index;
-    //this.CVNavItems[0].select();
+    this.CVNavItems.forEach(function (nav_item, i) {
+	    nav_item.unselect();
+    });
+
+    selected_title = this.CVNavItems[index].dom_jq.text();
+    this.CVNavItems[index].select();
+    showContent(selected_title.toLowerCase().split(" ").join("_"));
 };
 
 CVNav.prototype.do_scroll = function(to) {
-    
+    // Deprecate this so the nav stays fixed
     scroll_duration = 250.0;
-    //console.debug(to);
     
     orig_height = this.dom_jq.children("ul").height();
     selected_title = this.CVNavItems[to].dom_jq.text();
-    //console.debug(selected_title.toLowerCase().split(" ").join("_"));
+
+    this.CVNavItems[to].select();
+
     old_nav_items = [];
     new_nav_items = [];
-    
+
     for ( i = 0; i < to; i++ ) {
         old_nav_item_jq = this.CVNavItems[i].dom_jq;
         new_nav_item_jq = old_nav_item_jq.clone();
         new_nav_item_jq.addClass("invisible");
         this.dom_jq.children("ul").append(new_nav_item_jq);
-        //this.CVNavItems.push( new CVNavItem(new_nav_item_jq, this, i) );
         old_nav_items.push(old_nav_item_jq);
         new_nav_items.push(new_nav_item_jq);
     }
-    
+
     new_height = this.dom_jq.children("ul").height();
-    
+
     move_distance = Math.abs(new_height - orig_height);
-    
+
     var $this = this;
-    
+
     for ( index in old_nav_items ) {
         old_nav_items[index].fadeOut(
             {   duration: scroll_duration * 0.75,
@@ -63,20 +66,19 @@ CVNav.prototype.do_scroll = function(to) {
             }
         );
     }
-    
+
     for ( index in new_nav_items ) {
         new_nav_items[index].removeClass("invisible");
         new_nav_items[index].hide();
         new_nav_items[index].fadeIn(
             {   duration: scroll_duration * 0.75,
                 complete: function() {
-                    //$(this).addClass("invisible");
-                    //$(this).show();
+                    //do nothing
                 }
             }
         );
     }
-    
+
     this.dom_jq.children("ul").animate(
         {"top":"-="+move_distance},
         {   duration:scroll_duration,
@@ -84,29 +86,16 @@ CVNav.prototype.do_scroll = function(to) {
                 for ( index in old_nav_items ) {
                     old_nav_items[index].remove();
                 }
-                //console.debug($this);
+
                 $this.build_item_list();
-                //for ( index in $this.CVNavItems ) {
-                //    $this.CVNavItems[index].index = index;
-                    //`console.debug(index);
-                //}
                 showContent(selected_title.toLowerCase().split(" ").join("_"));
-                
-                //showContent();
-                
+
             },
             always: function() {
-                //$this.dom_jq.children("ul").css({"padding-top":orig_padding});
-                //scalePage();
+                //do nothing
             }
         }
     );
-    
-    
-    
-    //console.debug(this.dom_jq.children("ul").height());
-    
-    //console.debug(this.CVNavItems);
 };
 
 // Nav item
