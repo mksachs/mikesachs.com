@@ -58,7 +58,9 @@ docs/_build/
 # PyBuilder
 target/
 
-
+node_modules/
+css/styles.css.map
+css/styles.css
 /py2/
 /mikesachs.com.xcodeproj/
 /build/
