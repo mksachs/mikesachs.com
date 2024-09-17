@@ -141,7 +141,7 @@ $font-sizes: (
   @extend .mt-5
 }
 
-.publication .title {
+.publication .title, .conference .title {
   font-family: FuturaT-DemiOblique;
 }
 
