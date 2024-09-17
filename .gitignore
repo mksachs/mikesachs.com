@@ -71,3 +71,5 @@ css/styles.css
 !/tex/templates
 .DS_Store
 /cover_letters/
+
+.htaccess
