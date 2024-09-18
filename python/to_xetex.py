@@ -5,6 +5,8 @@ import re
 import bs4
 from bs4 import BeautifulSoup
 
+import os
+
 sys.path.append('./')
 
 
@@ -33,14 +35,14 @@ def create_bib_item(bib_item_node):
     for child in bib_item_node.children:
         if type(child) is bs4.element.Tag:
             if child.name == 'span':
-                if child['class'][0] == 'Title':
+                if child['class'][0] == 'title':
                     try:
                         content_str += '\\item \\it{\\href{%s}{%s}}'%(latex_escape(child.contents[0]['href']), latex_escape(child.get_text(strip=True)))
                     except TypeError:
                         content_str += '\\item \\it{%s}'%(latex_escape(child.get_text(strip=True)))
-                elif child['class'][0] == 'Author':
+                elif child['class'][0] == 'author':
                     content_str += '%s'%(author_line(child.get_text(strip=True)))
-                elif child['class'][0] == 'Date':
+                elif child['class'][0] == 'date':
                     content_str += '(%s)'%(latex_escape(child.get_text(strip=True), abbrev=True))
                 else:
                     content_str += '%s'%(latex_escape(child.get_text(strip=True), abbrev=True))
@@ -62,7 +64,7 @@ def create_bib_item(bib_item_node):
 def main(argv=None):
     if argv is None:
         argv = sys.argv
-    
+
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -77,7 +79,7 @@ def main(argv=None):
     args = parser.parse_args()
 
     html_f = open('../index.html')
-    
+
     skip_sections = ['examples']
 
     if args.print_ver:
@@ -96,63 +98,63 @@ def main(argv=None):
     skip_sections = list(set(skip_sections))
 
     resume_text_f = open('../resume.txt', 'w')
-    
+
     xetex_template = xetex_template_f.read().split('%%%%%%%%%%%%%%%%%%%%%%%%% Content Here %%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
     soup = BeautifulSoup(html_f.read(), 'html.parser')
 
-    content = soup('div', {'class':'content'})
+    content = soup('div', {'class':'level_1'})
     xetex_output = [xetex_template[0]]
 
     for c_tag in content:
-        section_title = c_tag.find('div', {'class':'section_title'}).get_text(strip=True)
+        section_title = c_tag.find('h1').get_text(strip=True)
         section_id = c_tag['id']
-        
+
         if section_id not in skip_sections:
             print(section_id)
             resume_text_f.write('\r' + section_title + '\r')
-            
+
             if section_id != 'summary':
                 xetex_output.append('\\section{%s}'%section_title)
-            
-            content_items = c_tag.find_all('div', {'class':'content_item'})
-            
+
+            content_items = c_tag.find_all('div', {'class':'level_2'})
+
             if section_id == 'publications':
-                content_items = c_tag.find_all('p', {'class':'content_item'})
+                content_items = c_tag.find_all('p', {'class':'level_2'})
                 xetex_output.append('\\begin{bibsection}')
             elif section_id == 'conferences':
                 pass
             elif section_id == 'awards_and_recognition':
                 xetex_output.append('\\begin{loneinnerlist}')
             elif section_id == 'summary':
-                content_items = c_tag.find_all('p', {'class':'content_item'})
-                
+                content_items = c_tag.find_all('p', {'class':'level_2'})
+
             for ci_tag in content_items:
-                
+
                 if section_id == 'publications':
                     xetex_output.append(create_bib_item(ci_tag))
                 elif section_id == 'conferences':
-                    title_tag = ci_tag.find('h1')
+                    title_tag = ci_tag.find('h2')
                     title_href_tag = title_tag('a')
                     try:
                         title_href = title_href_tag[0]['href']
                     except IndexError:
                         title_href = ''
                     xetex_output.append('\\subsection{%s}{%s}' % (latex_escape(title_tag.get_text(strip=True)), title_href))
-                    
+
                     xetex_output.append('\\begin{bibsection}')
                     bib_items = ci_tag.find_all('p')
                     for bib_item in bib_items:
                         xetex_output.append(create_bib_item(bib_item))
                     xetex_output.append('\\end{bibsection}')
                     xetex_output.append('\\vspace{\\baselineskip}')
-                    
+
                 elif section_id == 'awards_and_recognition':
                     xetex_output.append('\\item %s' % (latex_escape(ci_tag.get_text(strip=True))))
                 elif section_id == 'press':
-                    title_tag = ci_tag.find('h1')
+                    title_tag = ci_tag.find('h2')
                     link_tags = ci_tag.find_all('a')
-                    
+
                     xetex_output.append('\\subsection{%s}{}' % (latex_escape(title_tag.get_text(strip=True))))
                     xetex_output.append('\\begin{outerlist}')
                     for link_tag in link_tags:
@@ -162,11 +164,11 @@ def main(argv=None):
                 elif section_id == 'summary':
                     resume_text_f.write(re.sub(r'\s+', ' ', latex_escape(ci_tag.get_text(strip=False).strip())) + '\r')
                     xetex_output.append('%s' % (latex_escape(ci_tag.get_text(strip=False).strip())))
-                    
+
                 else:
                     for child in ci_tag.children:
                         if type(child) is bs4.element.Tag:
-                            if child.name == 'h1':
+                            if child.name == 'h2':
                                 subsection_a_tag = child.find('a')
                                 if subsection_a_tag is not None:
                                     subsection_href = subsection_a_tag['href']
@@ -201,12 +203,12 @@ def main(argv=None):
                                     resume_text_f.write(re.sub(r'\s+', ' ', '- ' + innerlist_item_str[2:]) + '\r')
                                     xetex_output.append('\\item %s'%innerlist_item_str[2:])
                                 xetex_output.append('\\end{innerlist}')
-                        
+
                         if child.next_sibling is None:
                             xetex_output.append('\\end{outerlist}')
                             xetex_output.append('\\vspace{\\baselineskip}')
                             xetex_output.append('')
-                            
+
             if section_id == 'publications':
                 xetex_output.append('\\end{bibsection}')
             elif section_id == 'conferences':
@@ -218,7 +220,7 @@ def main(argv=None):
             xetex_output.append('')
 
     xetex_output.append(xetex_template[1])
-    
+
     if args.print_ver:
         out_f = open('../tex/pdf_print.xetex','w')
     else:
@@ -233,5 +235,5 @@ def main(argv=None):
     resume_text_f.close()
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     sys.exit(main())

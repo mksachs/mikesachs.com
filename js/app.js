@@ -1,25 +1,16 @@
-// Load any external scripts that are needed.
-(function() {
-    $.getScript("js/classes.js", function() {
-        page_nav = new CVNav("#column2");
-
-    });
-
-}());
-
 // Page functions
 function scalePage() {
     //adjust the font sizes
-    total_width = $(window).outerWidth();
-    base_em = 3.125;
-    base_width = 1280.0;
-    scale = base_em/base_width;
-    golden_ratio = (1.0+Math.sqrt(5))/2.0;
+    let total_width = $(window).outerWidth();
+    let base_em = 3.125;
+    let base_width = 1280.0;
+    let scale = base_em/base_width;
+    let golden_ratio = (1.0+Math.sqrt(5))/2.0;
 
-    col1 = total_width * scale;
-    col2 = total_width * scale * (1.0/golden_ratio);
-    col3a = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio);
-    col3b = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio) * (1.0/golden_ratio);
+    let col1 = total_width * scale;
+    let col2 = total_width * scale * (1.0/golden_ratio);
+    let col3a = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio);
+    let col3b = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio) * (1.0/golden_ratio);
 
     $("#column1 h1").css({"font-size":0.95 * col1 + "em"});
     $("#column2 li").css({"font-size":0.9 * col2 + "em"});
@@ -31,40 +22,44 @@ function scalePage() {
     $("#column1 #links p").css({"font-size":col3a + "em"});
 
     //adjust the vertical margins and padding to line up all three columns
-    total_height = $(window).outerHeight();
+    let total_height = $(window).outerHeight();
 
     $("#column1, #column2, #column3").css({"height":total_height + "px"});
 
-    col1_line_height_split = $("#column1 h1").css("line-height").split("px");
+    let col1_line_height_split = $("#column1 h1").css("line-height").split("px");
 
-    if ( col1_line_height_split.length > 1 ) {
-        // the line height is already in pixels
-        col1_line_height = parseFloat(col1_line_height_split[0]);
-        col1_line_height_in_pix = true;
-    } else {
-        // the line height is a percentage of the font size
-        col1_line_height = col1_line_height_split[0];
-        col1_line_height_in_pix = false;
-    }
+  let col1_line_height;
+  let col1_line_height_in_pix;
+  if (col1_line_height_split.length > 1) {
+    // the line height is already in pixels
+    col1_line_height = parseFloat(col1_line_height_split[0]);
+    col1_line_height_in_pix = true;
+  } else {
+    // the line height is a percentage of the font size
+    col1_line_height = col1_line_height_split[0];
+    col1_line_height_in_pix = false;
+  }
 
-    col1_font_size = parseFloat($("#column1 h1").css("font-size").split("px")[0]);
+    let col1_font_size = parseFloat($("#column1 h1").css("font-size").split("px")[0]);
 
-    links_height = $("#column1 #links").outerHeight(true);
-    if (links_height == 0)
+    let links_height = $("#column1 #links").outerHeight(true);
+    if (links_height === 0)
         links_height = $("#column1 #links p").outerHeight(true);
-    col1_h1_height = $("#column1 h1").height();
+    let col1_h1_height = $("#column1 h1").height();
 
+    let col1_baseline;
     if (col1_line_height_in_pix)
-        col1_baseline = col1_line_height - col1_font_size;
+      col1_baseline = col1_line_height - col1_font_size;
     else
-        col1_baseline = (col1_line_height - 1) * col1_font_size;
+      col1_baseline = (col1_line_height - 1) * col1_font_size;
 
-    col2_li_bottom_margin = col1_baseline * 1.3;
+    let col2_li_bottom_margin = col1_baseline * 1.3;
 
     $("#column2 li").css({"margin-bottom":col2_li_bottom_margin + "px"});
 
-    top_position = total_height * (1.0 - 1.0/golden_ratio) - col1_baseline;
+    let top_position = total_height * (1.0 - 1.0 / golden_ratio) - col1_baseline;
 
+    let top_adjust;
     if ( $("#column2 ul").outerHeight(true) + top_position + col1_baseline > total_height ) {
         top_adjust = top_position - ($("#column2 ul").outerHeight(true) + top_position + col1_baseline - total_height);
         if (top_adjust < 0)
@@ -80,8 +75,8 @@ function scalePage() {
 }
 
 function showPage() {
-    dur = 500.0;
-    overlap = 0.75;
+    let dur = 500.0;
+    let overlap = 0.75;
     $("#column1,#column2,#column3").removeClass("invisible");
     $("#column1,#column2,#column3").css({"display":"none"});
     $("#column1").fadeIn({duration:dur, progress:function(a, b, c) {
@@ -96,9 +91,9 @@ function showPage() {
 }
 
 function showContent(content_id) {
-    dur = 500.0;
-    overlap = 0.5;
-    curr_content = $("#column3 .level_1.active");
+    let dur = 500.0;
+    let overlap = 0.5;
+    let curr_content = $("#column3 .level_1.active");
     scalePage();
 
     $("#column3").animate(
@@ -133,12 +128,18 @@ $(document).ready(function(){
     $("#column2").append("<ul></ul>");
     $("#column3 .level_1").each(function(index){
         $("#column2 ul").append("<li>"+jQuery.trim($(this).children("h1").text())+"</li>");
-        if ( $(this).attr("id") == "summary" ) {
+        if ( $(this).attr("id") === "summary" ) {
             $(this).addClass("active");
         } else {
             $(this).hide();
         }
     });
+    // Load any external scripts that are needed.
+    (function() {
+        $.getScript("js/classes.js", function() {
+            let page_nav = new CVNav("#column2");
+        });
+    }());
     $("#links p").mouseenter(function(event) {
         $(event.delegateTarget).css("cursor","pointer");
         $(event.delegateTarget).addClass("hovered");

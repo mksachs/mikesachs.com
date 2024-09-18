@@ -1,19 +1,13 @@
 // Nav system
 function CVNav(dom_id) {
     this.dom_jq = $(dom_id);
-    
     this.build_item_list();
-    
-    
-    //this.selected = 0;
-    
 }
 
 CVNav.prototype.build_item_list = function() {
     this.CVNavItems = [];
-    var $this = this;
+    const $this = this;
     this.dom_jq.find("li").each(function( index ) {
-        //console.debug(this);
         $this.CVNavItems.push( new CVNavItem(this, $this, index) );
     });
     this.CVNavItems[0].select();
@@ -24,15 +18,15 @@ CVNav.prototype.do_nav = function(index) {
 	    nav_item.unselect();
     });
 
-    selected_title = this.CVNavItems[index].dom_jq.text();
+    let selected_title = this.CVNavItems[index].dom_jq.text();
     this.CVNavItems[index].select();
     showContent(selected_title.toLowerCase().split(" ").join("_"));
 };
 
+// Deprecate this so the nav stays fixed
 CVNav.prototype.do_scroll = function(to) {
-    // Deprecate this so the nav stays fixed
     scroll_duration = 250.0;
-    
+
     orig_height = this.dom_jq.children("ul").height();
     selected_title = this.CVNavItems[to].dom_jq.text();
 
@@ -113,10 +107,10 @@ function CVNavItem(dom_id, parent_obj, index) {
 }
 
 CVNavItem.prototype.hover = function(event) {
-    $this = event.data.$this;
-    
+    let $this = event.data.$this;
+
     //console.debug($this.dom_jq.hasClass("selected"));
-    
+
     if ( !$this.dom_jq.hasClass("selected") ) {
         $(event.delegateTarget).css("cursor","pointer");
         $(event.delegateTarget).addClass("hovered");
@@ -124,8 +118,8 @@ CVNavItem.prototype.hover = function(event) {
 };
 
 CVNavItem.prototype.unhover = function(event) {
-    $this = event.data.$this;
-    
+    let $this = event.data.$this;
+
     if ( !$this.dom_jq.hasClass("selected") ) {
         $(event.delegateTarget).css("cursor","auto");
         $(event.delegateTarget).removeClass("hovered");
@@ -133,7 +127,7 @@ CVNavItem.prototype.unhover = function(event) {
 };
 
 CVNavItem.prototype.do_nav = function(event) {
-    $this = event.data.$this;
+    let   $this = event.data.$this;
     if ( !$this.dom_jq.hasClass("selected") ) {
         $(event.delegateTarget).css("cursor","auto");
         $(event.delegateTarget).removeClass("hovered");
