@@ -126,9 +126,29 @@ function showContent(content_id) {
 
 // Code to run when the page is ready
 $(document).ready(function(){
-  const root = document.querySelector(':root');
-  const total_width = $(window).outerWidth(),
+    const root = document.querySelector(':root');
+    const total_width = $(window).outerWidth(),
         max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
+
+    // if (window.matchMedia) {
+    //     console.debug("here");
+    //     const media = window.matchMedia("print");
+    //     const myFunc = mediaQueryList => {
+    //       if (mediaQueryList.matches) {
+    //         console.debug("print");
+    //       }
+    //     };
+    //     try {
+    //         media.addEventListener("change", myFunc);
+    //     } catch (error) {
+    //         try {
+    //            media.addListener(myFunc);
+    //         } catch (error) {
+    //             console.debug('Error', error)
+    //         }
+    //     }
+    // }
+
     $("#column2").append("<ul></ul>");
     $("#column3 .section").each(function(index){
         $("#column2 ul").append("<li>"+jQuery.trim($(this).children("h1").text())+"</li>");

@@ -442,7 +442,6 @@ a {
    ========================================================================== */
 
 @media only screen and (max-width: 1200px) {
-/* For mobile phones: */
     .container {
         max-width: 100%;
         display: grid;
@@ -568,10 +567,6 @@ a {
     }
 }
 
-@media only screen and (min-width: 35em) {
-  /* Style adjustments for viewports that meet the condition */
-}
-
 @media print,
   (-webkit-min-device-pixel-ratio: 1.25),
   (min-resolution: 1.25dppx),
@@ -586,6 +581,67 @@ a {
    ========================================================================== */
 
 @media print {
+  body {
+      justify-content: start;
+  }
+  .container {
+        max-width: 1024px;
+        display: grid;
+        grid-template-columns: 300px calc(1024px - 300px);
+        grid-template-rows: auto;
+        grid-column-gap: 5%;
+        justify-content: stretch;
+        width: 1024px;
+        grid-template-areas:
+            "header content";
+        margin-left: 15em;
+        margin-right: 15em;
+        padding-top: calc(var(--top-space) * 0.7);
+    }
+
+    #column3 h1 {
+        font-family: var(--heading-font);
+        font-size: calc(var(--col-3-font-size) * 2);
+    }
+
+    #column3 h2 {
+        font-size: calc(var(--col-3-font-size) * 1.3);
+    }
+
+    #column3 h3 {
+        font-size: calc(var(--col-3-font-size) * 1.1);
+    }
+
+    #column3 {
+        grid-area: content;
+        overflow: auto;
+        grid-row: initial;
+        padding-top: 0;
+        transition-property: opacity;
+        transition-duration: var(--page-fade-in-duration);
+        transition-delay: calc(var(--page-fade-in-duration) * 0.5);
+        opacity: 0;
+
+        display: initial;
+    }
+
+    #column3 .section {
+        margin: 0 0 2rem 0;
+        width: 100%;
+    }
+
+    #column2 {
+        display: none;
+    }
+
+    #column3 h1 {
+        display: initial;
+    }
+
+    #column3 #summary h1 {
+        display: none;
+    }
+
   *,
   *::before,
   *::after {
