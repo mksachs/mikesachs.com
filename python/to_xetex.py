@@ -103,7 +103,7 @@ def main(argv=None):
 
     soup = BeautifulSoup(html_f.read(), 'html.parser')
 
-    content = soup('div', {'class':'level_1'})
+    content = soup('div', {'class':'section'})
     xetex_output = [xetex_template[0]]
 
     for c_tag in content:
@@ -117,17 +117,17 @@ def main(argv=None):
             if section_id != 'summary':
                 xetex_output.append('\\section{%s}'%section_title)
 
-            content_items = c_tag.find_all('div', {'class':'level_2'})
+            content_items = c_tag.find_all('div', {'class':'subsection'})
 
             if section_id == 'publications':
-                content_items = c_tag.find_all('p', {'class':'level_2'})
+                content_items = c_tag.find_all('p', {'class':'subsection'})
                 xetex_output.append('\\begin{bibsection}')
             elif section_id == 'conferences':
                 pass
             elif section_id == 'awards_and_recognition':
                 xetex_output.append('\\begin{loneinnerlist}')
             elif section_id == 'summary':
-                content_items = c_tag.find_all('p', {'class':'level_2'})
+                content_items = c_tag.find_all('p', {'class':'subsection'})
 
             for ci_tag in content_items:
 

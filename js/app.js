@@ -2,7 +2,7 @@
 function scalePage() {
     //adjust the font sizes
     let total_width = $(window).outerWidth();
-    let base_em = 3.125;
+    let base_em = 3;
     let base_width = 1280.0;
     let scale = base_em/base_width;
     let golden_ratio = (1.0+Math.sqrt(5))/2.0;
@@ -28,17 +28,17 @@ function scalePage() {
 
     let col1_line_height_split = $("#column1 h1").css("line-height").split("px");
 
-  let col1_line_height;
-  let col1_line_height_in_pix;
-  if (col1_line_height_split.length > 1) {
-    // the line height is already in pixels
-    col1_line_height = parseFloat(col1_line_height_split[0]);
-    col1_line_height_in_pix = true;
-  } else {
-    // the line height is a percentage of the font size
-    col1_line_height = col1_line_height_split[0];
-    col1_line_height_in_pix = false;
-  }
+    let col1_line_height;
+    let col1_line_height_in_pix;
+    if (col1_line_height_split.length > 1) {
+        // the line height is already in pixels
+        col1_line_height = parseFloat(col1_line_height_split[0]);
+        col1_line_height_in_pix = true;
+    } else {
+        // the line height is a percentage of the font size
+        col1_line_height = col1_line_height_split[0];
+        col1_line_height_in_pix = false;
+    }
 
     let col1_font_size = parseFloat($("#column1 h1").css("font-size").split("px")[0]);
 
@@ -71,14 +71,14 @@ function scalePage() {
     $("#column1 h1").css({"top":top_adjust + "px", "position":"relative"});
     $("#column1 #links").css({"top":(top_adjust + col1_h1_height) + "px", "position":"absolute"});
     $("#column2 ul").css({"top":(top_adjust + col1_baseline) + "px", "position":"relative"});
-    $("#column3 .level_1").css({"top":(top_adjust + col1_baseline) + "px", "position":"absolute"});
+    $("#column3 .section").css({"top":(top_adjust + col1_baseline) + "px", "position":"absolute"});
 }
 
 function showPage() {
     let dur = 500.0;
     let overlap = 0.75;
     $("#column1,#column2,#column3").removeClass("invisible");
-    $("#column1,#column2,#column3").css({"display":"none"});
+    $("#column1,#column2,#column3").css({"opacity":0});
     $("#column1").fadeIn({duration:dur, progress:function(a, b, c) {
         if ( c < dur * overlap ) {
             $("#column2").fadeIn({duration:dur, progress:function(a, b, c) {
@@ -93,19 +93,20 @@ function showPage() {
 function showContent(content_id) {
     let dur = 500.0;
     let overlap = 0.5;
-    let curr_content = $("#column3 .level_1.active");
-    scalePage();
+    let curr_content = $("#column3 .section.active");
+    // scalePage();
 
     $("#column3").animate(
-        {scrollTop: 0},
-        {   duration: dur * overlap}
+      {scrollTop: 0},
+        {duration: dur * overlap}
     );
     curr_content.fadeOut(
         {   duration: dur,
             progress: function(a, b, c) {
                 if ( c < dur * overlap ) {
-                    $("#"+content_id).removeClass("invisible");
                     $("#column3").scrollTop(0);
+                    // curr_content.addClass("unflow")
+                    // $("#"+content_id).show();
                     $("#"+content_id).fadeIn(
                         {   duration:dur,
                             complete: function() {
@@ -117,7 +118,7 @@ function showContent(content_id) {
             },
             complete: function() {
                 curr_content.removeClass("active");
-                curr_content.addClass("invisible");
+                curr_content.hide();
             }
         }
     );
@@ -125,13 +126,18 @@ function showContent(content_id) {
 
 // Code to run when the page is ready
 $(document).ready(function(){
+  const root = document.querySelector(':root');
+  const total_width = $(window).outerWidth(),
+        max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
     $("#column2").append("<ul></ul>");
-    $("#column3 .level_1").each(function(index){
+    $("#column3 .section").each(function(index){
         $("#column2 ul").append("<li>"+jQuery.trim($(this).children("h1").text())+"</li>");
         if ( $(this).attr("id") === "summary" ) {
             $(this).addClass("active");
         } else {
-            $(this).hide();
+            if ( total_width >= max_width) {
+                $(this).hide();
+            }
         }
     });
     // Load any external scripts that are needed.
@@ -149,12 +155,31 @@ $(document).ready(function(){
         $(event.delegateTarget).removeClass("hovered");
     });
 
-    scalePage();
-    showPage();
+    let col1 = document.getElementById('column1'),
+        col2 = document.getElementById('column2'),
+        col3 = document.getElementById('column3');
+
+    col1.classList.toggle('fadeIn');
+    col2.classList.toggle('fadeIn');
+    col3.classList.toggle('fadeIn');
+
+
+    // scalePage();
+    // showPage();
 
 });
 
 // Code to run when the window is resized
 $(window).resize(function(){
-    scalePage();
+    const root = document.querySelector(':root');
+    const total_width = $(window).outerWidth(),
+          max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
+    $("#column3 .section").each(function(index){
+        $(this).show();
+        if ( !$(this).hasClass("active") ) {
+            if ( total_width >= max_width) {
+                $(this).hide();
+            }
+        }
+    });
 });
