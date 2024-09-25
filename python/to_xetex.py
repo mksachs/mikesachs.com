@@ -5,10 +5,7 @@ import re
 import bs4
 from bs4 import BeautifulSoup
 
-import os
-
 sys.path.append('./')
-
 
 def latex_escape(text, abbrev=False):
     if len(text) != 0:
@@ -22,44 +19,305 @@ def latex_escape(text, abbrev=False):
     else:
         return ''
 
+class Resume:
+    doc_title_str = """\\makeheading{Michael Sachs}
+        {http://www.mikesachs.com}
+        {www.mikesachs.com}
+        {mike@mikesachs.com}
 
-def author_line(text):
-    if len(text.split('*M. K. Sachs')) == 1:
-        return latex_escape(' \\bf{M. K. Sachs}'.join(text.split('M. K. Sachs')), abbrev=True)
-    else:
-        return latex_escape(' \\bf{*M. K. Sachs}'.join(text.split('*M. K. Sachs')), abbrev=True)
 
 
-def create_bib_item(bib_item_node):
-    content_str = ''
-    for child in bib_item_node.children:
-        if type(child) is bs4.element.Tag:
-            if child.name == 'span':
-                if child['class'][0] == 'title':
-                    try:
-                        content_str += '\\item \\it{\\href{%s}{%s}}'%(latex_escape(child.contents[0]['href']), latex_escape(child.get_text(strip=True)))
-                    except TypeError:
-                        content_str += '\\item \\it{%s}'%(latex_escape(child.get_text(strip=True)))
-                elif child['class'][0] == 'author':
-                    content_str += '%s'%(author_line(child.get_text(strip=True)))
-                elif child['class'][0] == 'date':
-                    content_str += '(%s)'%(latex_escape(child.get_text(strip=True), abbrev=True))
-                else:
-                    content_str += '%s'%(latex_escape(child.get_text(strip=True), abbrev=True))
-            elif child.name == 'br':
-                content_str += '\\\\ \r'
-        elif type(child) is bs4.element.NavigableString:
+"""
+
+    def __init__(self, base_html_doc_loc: str, doc_header_template_loc: str):
+        no_title_sections = ['summary']
+        html_f = open(base_html_doc_loc)
+        soup = BeautifulSoup(html_f.read(), 'html.parser')
+        sections = soup('div', class_='section')
+
+        doc_header_template_f = open(doc_header_template_loc)
+        self.doc_header_template = doc_header_template_f.read()
+
+        self.sections = []
+        for section in sections:
+            rs = ResumeSection(section, no_title_sections=no_title_sections)
+            self.sections.append(rs)
+
+        html_f.close()
+        doc_header_template_f.close()
+
+    def latex(self) -> str:
+        latex_str_list = [self.doc_header_template, '\\begin{document}', self.doc_title_str]
+        for section in self.sections:
+            latex_str_list.append(section.latex())
+        latex_str_list.append('\\end{document}\n')
+        latex_str_list.append('%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+
+        return ''.join(latex_str_list)
+
+class ResumeSection:
+    def __init__(self, section: bs4.element.Tag, **kwargs):
+        no_title_sections = kwargs['no_title_sections']
+        self.section_title = section.find('h1').get_text(strip=True)
+        self.section_id = section['id']
+
+        self.skip_title = False
+        if self.section_id in no_title_sections:
+            self.skip_title = True
+
+        # print(self.section_title, section_id, self.skip_title)
+
+        subsections = section(class_= 'subsection');
+        self.subsections = []
+        for subsection in subsections:
             try:
-                char = child.encode('ascii', 'xmlcharrefreplace').strip().split()[0]
-            except IndexError:
-                char = None
-            if char == '&#160;':
-                content_str += ' '
-    if content_str[-4:-1].strip() == '\\\\':
-        return content_str[0:-4]
-    else:
-        return content_str
+                subsection_type = next(x for x in subsection['class'] if x != 'subsection')
+            except StopIteration:
+                subsection_type = None
+            if subsection_type == 'job':
+                self.subsections.append(ResumeJob(subsection))
+            elif subsection_type == 'school':
+                self.subsections.append(ResumeSchool(subsection))
+            elif subsection_type == 'publication':
+                self.subsections.append(ResumePublication(subsection))
+            elif subsection_type == 'conference':
+                self.subsections.append(ResumeConference(subsection))
+            elif subsection_type == 'news-outlet':
+                self.subsections.append(ResumePress(subsection))
+            elif subsection_type is None:
+                if self.section_id == 'summary':
+                    self.subsections.append(ResumeSummary(subsection))
+                elif self.section_id == 'technologies':
+                    self.subsections.append(ResumeTechnology(subsection))
+                elif self.section_id =='awards':
+                    self.subsections.append(ResumeAwards(subsection))
 
+    def latex(self) -> str:
+        subsections_str = ''
+        for subsection in self.subsections:
+            subsections_str += subsection.latex()
+        latex_str = '% Section\n'
+        end_bibsection = ''
+        if not self.skip_title:
+            latex_str += f'\\section{{{self.section_title}}}\n'
+            if self.section_id == 'publications':
+                latex_str += '\n\\begin{bibsection}\n'
+                end_bibsection = '\\end{bibsection}\n\\vspace{1.5\\baselineskip}\n\n'
+
+        latex_str += f'{subsections_str}{end_bibsection}\\vspace{{\\baselineskip}}\n'
+
+        return latex_str
+
+class ResumePress:
+
+    def __init__(self, news_outlet_tag: bs4.element.Tag):
+        self.name = news_outlet_tag.find(class_='name').get_text(strip=True)
+        self.articles = []
+        for article in news_outlet_tag(class_='article'):
+            self.articles.append(article)
+
+    def latex(self) -> str:
+        articles_str_list = []
+        for art in self.articles:
+            try:
+                href = art.find('a').attrs['href']
+            except AttributeError:
+                href = ''
+            if href == '':
+                for child in art.children:
+                    if child.name != 'br':
+                        articles_str_list.append(f'{child.strip()}')
+            else:
+                title = art.get_text(strip=True)
+                articles_str_list.append(f'\\href{{{href}}}{{{title}}}')
+
+        newline_str = '\\\\ \n'
+        latex_str = f"""% Subsection
+\\subsection{{{self.name}}}{{}}
+
+{newline_str.join(articles_str_list)}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumeAwards:
+
+    def __init__(self, awards_tag: bs4.element.Tag):
+        self.awards_list = []
+        for li in awards_tag('li'):
+            self.awards_list.append(latex_escape(li.get_text(strip=True)))
+
+    def latex(self) -> str:
+        awards_list_str = ''
+        for li in self.awards_list:
+            awards_list_str += f'\\item[\\listbullet] {li}\n'
+        latex_str = f"""% Subsection
+\\begin{{loneinnerlist}}
+{awards_list_str}\\end{{loneinnerlist}}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumePublication:
+
+    def __init__(self, pub_tag: bs4.element.Tag):
+        self.pub_tag = pub_tag
+
+    def author_line(self, text) -> str:
+        if len(text.split('*M. K. Sachs')) == 1:
+            return latex_escape(' \\bf{M. K. Sachs}'.join(text.split('M. K. Sachs')), abbrev=True).strip()
+        else:
+            return latex_escape(' \\bf{*M. K. Sachs}'.join(text.split('*M. K. Sachs')), abbrev=True).strip()
+
+    def latex(self) -> str:
+        latex_str_lst = []
+        for child in self.pub_tag.children:
+            if type(child) is bs4.element.Tag:
+                if child.name == 'span':
+                    if child['class'][0] == 'title':
+                        title_str = latex_escape(child.get_text(strip=True))
+                        try:
+                            href_str = latex_escape(child.contents[0]['href'])
+                            latex_str_lst.append(f'\\item \\bf{{\\href{{{href_str}}}{{{title_str}}}}}')
+                        except TypeError:
+                            latex_str_lst.append(f'\\item \\bf{{{title_str}}}')
+                    elif child['class'][0] == 'author':
+                        author_str = self.author_line(child.get_text(strip=True))
+                        latex_str_lst.append(f'{author_str}')
+                    elif child['class'][0] == 'date':
+                        date_str = latex_escape(child.get_text(strip=True), abbrev=True)
+                        latex_str_lst.append(f'({date_str}) ')
+                    else:
+                        other_str = latex_escape(child.get_text(strip=True), abbrev=True)
+                        latex_str_lst.append(f'{other_str} ')
+                elif child.name == 'br':
+                    latex_str_lst.append('\\\\ \n')
+            elif type(child) is bs4.element.NavigableString:
+                try:
+                    char = child.encode('ascii', 'xmlcharrefreplace').strip().split()[0]
+                except IndexError:
+                    char = None
+                if char == '&#160;':
+                    latex_str_lst.append(' ')
+        latex_str = ''.join(latex_str_lst)
+        if latex_str[-5:-1].strip() == '\\\\':
+            return latex_str[0:-5] + '\n\n'
+        else:
+            return latex_str + '\n\n'
+
+class ResumeConference:
+
+    def __init__(self, conference_tag: bs4.element.Tag):
+        self.name = conference_tag.find(class_='name').get_text(strip=True)
+        try:
+            self.href = conference_tag.find(class_='name').find('a').attrs['href']
+        except AttributeError:
+            self.href = ''
+        self.submissions = []
+        for submission in conference_tag(class_='submission'):
+            self.submissions.append(ResumePublication(submission))
+
+    def latex(self) -> str:
+        submissions_str_list = []
+        for sub in self.submissions:
+            submissions_str_list.append(sub.latex())
+        latex_str = f"""% Subsection
+\\subsection{{{self.name}}}{{{self.href}}}
+
+\\begin{{bibsection}}
+{''.join(submissions_str_list)}\\end{{bibsection}}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumeSchool:
+
+    def __init__(self, job_tag: bs4.element.Tag):
+        self.org = job_tag.find(class_='org').get_text(strip=True)
+        self.degree_date = job_tag.find(class_='degree_date').get_text(strip=True)
+        # self.description_list = job_tag.find(class_='description').get_text(strip=True)
+        self.description_list = []
+        for li in job_tag.find('ul', class_='description')('li'):
+            self.description_list.append(latex_escape(li.get_text(strip=True)))
+
+    def latex(self) -> str:
+        description_list_str = ''
+        for li in self.description_list:
+            description_list_str += '\\item[\\listbullet] {li}\n'.format(li=li)
+        latex_str = f"""% Subsection
+\\subsection{{{self.org}}}{{}}
+
+\\subsubsectiontitle{{{self.degree_date}}}\\\\
+
+\\begin{{outerlist}}
+{description_list_str}\\end{{outerlist}}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumeTechnology:
+
+    def __init__(self, job_tag: bs4.element.Tag):
+        self.subtitle = job_tag.find('h2').get_text(strip=True)
+        self.description = job_tag.find('p').get_text(strip=True)
+
+    def latex(self) -> str:
+        latex_str = f"""% Subsection
+\\subsection{{{self.subtitle}}}{{}}
+
+{self.description}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumeJob:
+
+    def __init__(self, job_tag: bs4.element.Tag):
+        self.org = job_tag.find(class_='org').get_text(strip=True)
+        self.title = job_tag.find(class_='title').get_text(strip=True)
+        self.dates = job_tag.find(class_='dates').get_text(strip=True)
+        self.description_text = job_tag.find('p', class_='description').get_text(strip=True)
+        self.description_list = []
+        for li in job_tag.find('ul', class_='description')('li'):
+            self.description_list.append(li.get_text(strip=True))
+
+    def latex(self) -> str:
+        description_list_str = ''
+        for li in self.description_list:
+            description_list_str += f'\\item[\\listbullet] {li}\n'
+        latex_str = f"""% Subsection
+\\subsection{{{self.org}}}{{}}
+
+\\subsubsectiontitle{{{self.title}}}\\\\
+\\subsubsectiontitle{{{self.dates}}}\\\\
+
+{self.description_text}
+
+\\vspace{{\\baselineskip}}
+
+\\begin{{outerlist}}
+{description_list_str}\\end{{outerlist}}
+
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
+
+class ResumeSummary:
+    def __init__(self, job_tag: bs4.element.Tag):
+        self.summary = job_tag.get_text(strip=True)
+
+    def latex(self) -> str:
+        latex_str = f"""{self.summary}
+\\vspace{{1.5\\baselineskip}}
+
+"""
+        return latex_str
 
 def main(argv=None):
     if argv is None:
@@ -78,162 +336,31 @@ def main(argv=None):
                        action='store_true')
     args = parser.parse_args()
 
-    html_f = open('../index.html')
+    # html_f = open('../index.html')
 
-    skip_sections = ['examples']
+    # skip_sections = ['examples']
+    #
+    # if args.print_ver:
+    #     xetex_template_f = open('../tex/templates/template_print.xetex')
+    #     skip_sections.append('conferences')
+    # else:
+    #     xetex_template_f = open('../tex/templates/template_web.xetex')
+    #
+    # if args.min:
+    #     skip_sections.append('publications')
+    #     skip_sections.append('awards_and_recognition')
+    #     skip_sections.append('teaching_experience')
+    #     skip_sections.append('press')
+    #     skip_sections.append('conferences')
+    #
+    # skip_sections = list(set(skip_sections))
 
-    if args.print_ver:
-        xetex_template_f = open('../tex/templates/template_print.xetex')
-        skip_sections.append('conferences')
-    else:
-        xetex_template_f = open('../tex/templates/template_web.xetex')
+    resume = Resume('index.html', 'tex/templates/doc_header_template.ltx')
 
-    if args.min:
-        skip_sections.append('publications')
-        skip_sections.append('awards_and_recognition')
-        skip_sections.append('teaching_experience')
-        skip_sections.append('press')
-        skip_sections.append('conferences')
+    out_f = open('tex/MichaelSachs.ltx','w')
 
-    skip_sections = list(set(skip_sections))
-
-    resume_text_f = open('../resume.txt', 'w')
-
-    xetex_template = xetex_template_f.read().split('%%%%%%%%%%%%%%%%%%%%%%%%% Content Here %%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-
-    soup = BeautifulSoup(html_f.read(), 'html.parser')
-
-    content = soup('div', {'class':'section'})
-    xetex_output = [xetex_template[0]]
-
-    for c_tag in content:
-        section_title = c_tag.find('h1').get_text(strip=True)
-        section_id = c_tag['id']
-
-        if section_id not in skip_sections:
-            print(section_id)
-            resume_text_f.write('\r' + section_title + '\r')
-
-            if section_id != 'summary':
-                xetex_output.append('\\section{%s}'%section_title)
-
-            content_items = c_tag.find_all('div', {'class':'subsection'})
-
-            if section_id == 'publications':
-                content_items = c_tag.find_all('p', {'class':'subsection'})
-                xetex_output.append('\\begin{bibsection}')
-            elif section_id == 'conferences':
-                pass
-            elif section_id == 'awards_and_recognition':
-                xetex_output.append('\\begin{loneinnerlist}')
-            elif section_id == 'summary':
-                content_items = c_tag.find_all('p', {'class':'subsection'})
-
-            for ci_tag in content_items:
-
-                if section_id == 'publications':
-                    xetex_output.append(create_bib_item(ci_tag))
-                elif section_id == 'conferences':
-                    title_tag = ci_tag.find('h2')
-                    title_href_tag = title_tag('a')
-                    try:
-                        title_href = title_href_tag[0]['href']
-                    except IndexError:
-                        title_href = ''
-                    xetex_output.append('\\subsection{%s}{%s}' % (latex_escape(title_tag.get_text(strip=True)), title_href))
-
-                    xetex_output.append('\\begin{bibsection}')
-                    bib_items = ci_tag.find_all('p')
-                    for bib_item in bib_items:
-                        xetex_output.append(create_bib_item(bib_item))
-                    xetex_output.append('\\end{bibsection}')
-                    xetex_output.append('\\vspace{\\baselineskip}')
-
-                elif section_id == 'awards_and_recognition':
-                    xetex_output.append('\\item %s' % (latex_escape(ci_tag.get_text(strip=True))))
-                elif section_id == 'press':
-                    title_tag = ci_tag.find('h2')
-                    link_tags = ci_tag.find_all('a')
-
-                    xetex_output.append('\\subsection{%s}{}' % (latex_escape(title_tag.get_text(strip=True))))
-                    xetex_output.append('\\begin{outerlist}')
-                    for link_tag in link_tags:
-                        xetex_output.append('\\item[] %s : \\\\ \\url{%s}' % (latex_escape(link_tag.get_text(strip=True)), latex_escape(link_tag['href'])))
-                    xetex_output.append('\\end{outerlist}')
-                    xetex_output.append('\\vspace{\\baselineskip}')
-                elif section_id == 'summary':
-                    resume_text_f.write(re.sub(r'\s+', ' ', latex_escape(ci_tag.get_text(strip=False).strip())) + '\r')
-                    xetex_output.append('%s' % (latex_escape(ci_tag.get_text(strip=False).strip())))
-
-                else:
-                    for child in ci_tag.children:
-                        if type(child) is bs4.element.Tag:
-                            if child.name == 'h2':
-                                subsection_a_tag = child.find('a')
-                                if subsection_a_tag is not None:
-                                    subsection_href = subsection_a_tag['href']
-                                else:
-                                    subsection_href = ''
-                                subsection_title = child.get_text(strip=True)
-                                resume_text_f.write('\r' + re.sub(r'\s+', ' ', subsection_title) + '\r')
-                                xetex_output.append('\\subsection{%s}{%s}' % (latex_escape(subsection_title), subsection_href))
-                                xetex_output.append('\\begin{outerlist}')
-                            elif child.name == 'p':
-                                outerlist_item = child.contents[0].strip()
-                                resume_text_f.write(re.sub(r'\s+', ' ', latex_escape(outerlist_item)) + '\r')
-                                xetex_output.append('\\item[] %s' % (latex_escape(outerlist_item)))
-                                outerlist_hfil_tag = child.find('span')
-                                if outerlist_hfil_tag is not None:
-                                    outerlist_hfil = outerlist_hfil_tag.get_text(strip=True)
-                                    resume_text_f.write(re.sub(r'\s+', ' ', latex_escape(outerlist_hfil)) + '\r')
-                                    xetex_output.append(' \\hfill {%s}' % (latex_escape(outerlist_hfil)))
-                            elif child.name == 'ul':
-                                xetex_output.append('\\begin{innerlist}')
-                                innerlist_item_tags = child.find_all('li', recursive=False)
-                                for innerlist_item_tag in innerlist_item_tags:
-                                    innerlist_item_str = ''
-                                    for c in innerlist_item_tag.children:
-                                        if type(c) is bs4.element.Tag:
-                                            innerlist_item_str += '\\href{%s}{%s}'%(latex_escape(c['href']), latex_escape(c.get_text(strip=True)))
-                                        else:
-                                            # print latexEscape(c)
-                                            innerlist_item_str += latex_escape(c)
-                                    #print innerlist_item_str
-                                    #xetex_output.append('\\item %s'%(latexEscape(innerlist_item_tag.get_text(strip=True)[2:])))
-                                    resume_text_f.write(re.sub(r'\s+', ' ', '- ' + innerlist_item_str[2:]) + '\r')
-                                    xetex_output.append('\\item %s'%innerlist_item_str[2:])
-                                xetex_output.append('\\end{innerlist}')
-
-                        if child.next_sibling is None:
-                            xetex_output.append('\\end{outerlist}')
-                            xetex_output.append('\\vspace{\\baselineskip}')
-                            xetex_output.append('')
-
-            if section_id == 'publications':
-                xetex_output.append('\\end{bibsection}')
-            elif section_id == 'conferences':
-                pass
-            elif section_id == 'awards_and_recognition':
-                xetex_output.append('\\end{loneinnerlist}')
-            xetex_output.append('\\vspace{2.0\\baselineskip}')
-            xetex_output.append('')
-            xetex_output.append('')
-
-    xetex_output.append(xetex_template[1])
-
-    if args.print_ver:
-        out_f = open('../tex/pdf_print.xetex','w')
-    else:
-        out_f = open('../tex/pdf_web.xetex','w')
-
-    for i in xetex_output:
-        out_f.write(i + '\r')
-
+    out_f.write(resume.latex())
     out_f.close()
-    html_f.close()
-    xetex_template_f.close()
-    resume_text_f.close()
-
 
 if __name__ == "__main__":
     sys.exit(main())

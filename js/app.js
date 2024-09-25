@@ -4,27 +4,27 @@ function scalePage() {
     let total_width = $(window).outerWidth();
     let base_em = 3;
     let base_width = 1280.0;
-    let scale = base_em/base_width;
-    let golden_ratio = (1.0+Math.sqrt(5))/2.0;
+    let scale = base_em / base_width;
+    let golden_ratio = (1.0 + Math.sqrt(5)) / 2.0;
 
     let col1 = total_width * scale;
-    let col2 = total_width * scale * (1.0/golden_ratio);
-    let col3a = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio);
-    let col3b = total_width * scale * (1.0/golden_ratio) * (1.0/golden_ratio) * (1.0/golden_ratio);
+    let col2 = total_width * scale * (1.0 / golden_ratio);
+    let col3a = total_width * scale * (1.0 / golden_ratio) * (1.0 / golden_ratio);
+    let col3b = total_width * scale * (1.0 / golden_ratio) * (1.0 / golden_ratio) * (1.0 / golden_ratio);
 
-    $("#column1 h1").css({"font-size":0.95 * col1 + "em"});
-    $("#column2 li").css({"font-size":0.9 * col2 + "em"});
-    $("#column3 h2").css({"font-size":1.262 * col3a + "em"});
-    $("#column3 h3").css({"font-size":1.1 * col3a + "em"});
-    $("#column3 h4").css({"font-size":col3a + "em"});
-    $("#column3 h5").css({"font-size":col3a + "em"});
-    $("#column3 p, #column3 li").css({"font-size":col3a + "em"});
-    $("#column1 #links p").css({"font-size":col3a + "em"});
+    $("#column1 h1").css({"font-size": 0.95 * col1 + "em"});
+    $("#column2 li").css({"font-size": 0.9 * col2 + "em"});
+    $("#column3 h2").css({"font-size": 1.262 * col3a + "em"});
+    $("#column3 h3").css({"font-size": 1.1 * col3a + "em"});
+    $("#column3 h4").css({"font-size": col3a + "em"});
+    $("#column3 h5").css({"font-size": col3a + "em"});
+    $("#column3 p, #column3 li").css({"font-size": col3a + "em"});
+    $("#column1 #links p").css({"font-size": col3a + "em"});
 
     //adjust the vertical margins and padding to line up all three columns
     let total_height = $(window).outerHeight();
 
-    $("#column1, #column2, #column3").css({"height":total_height + "px"});
+    $("#column1, #column2, #column3").css({"height": total_height + "px"});
 
     let col1_line_height_split = $("#column1 h1").css("line-height").split("px");
 
@@ -49,45 +49,49 @@ function scalePage() {
 
     let col1_baseline;
     if (col1_line_height_in_pix)
-      col1_baseline = col1_line_height - col1_font_size;
+        col1_baseline = col1_line_height - col1_font_size;
     else
-      col1_baseline = (col1_line_height - 1) * col1_font_size;
+        col1_baseline = (col1_line_height - 1) * col1_font_size;
 
     let col2_li_bottom_margin = col1_baseline * 1.3;
 
-    $("#column2 li").css({"margin-bottom":col2_li_bottom_margin + "px"});
+    $("#column2 li").css({"margin-bottom": col2_li_bottom_margin + "px"});
 
     let top_position = total_height * (1.0 - 1.0 / golden_ratio) - col1_baseline;
 
     let top_adjust;
-    if ( $("#column2 ul").outerHeight(true) + top_position + col1_baseline > total_height ) {
+    if ($("#column2 ul").outerHeight(true) + top_position + col1_baseline > total_height) {
         top_adjust = top_position - ($("#column2 ul").outerHeight(true) + top_position + col1_baseline - total_height);
         if (top_adjust < 0)
             top_adjust = 0;
     } else {
-        top_adjust =  top_position;
+        top_adjust = top_position;
     }
 
-    $("#column1 h1").css({"top":top_adjust + "px", "position":"relative"});
-    $("#column1 #links").css({"top":(top_adjust + col1_h1_height) + "px", "position":"absolute"});
-    $("#column2 ul").css({"top":(top_adjust + col1_baseline) + "px", "position":"relative"});
-    $("#column3 .section").css({"top":(top_adjust + col1_baseline) + "px", "position":"absolute"});
+    $("#column1 h1").css({"top": top_adjust + "px", "position": "relative"});
+    $("#column1 #links").css({"top": (top_adjust + col1_h1_height) + "px", "position": "absolute"});
+    $("#column2 ul").css({"top": (top_adjust + col1_baseline) + "px", "position": "relative"});
+    $("#column3 .section").css({"top": (top_adjust + col1_baseline) + "px", "position": "absolute"});
 }
 
 function showPage() {
     let dur = 500.0;
     let overlap = 0.75;
     $("#column1,#column2,#column3").removeClass("invisible");
-    $("#column1,#column2,#column3").css({"opacity":0});
-    $("#column1").fadeIn({duration:dur, progress:function(a, b, c) {
-        if ( c < dur * overlap ) {
-            $("#column2").fadeIn({duration:dur, progress:function(a, b, c) {
-                if ( c < dur * overlap ) {
-                    $("#column3").fadeIn(dur);
-                }
-            }});
+    $("#column1,#column2,#column3").css({"opacity": 0});
+    $("#column1").fadeIn({
+        duration: dur, progress: function (a, b, c) {
+            if (c < dur * overlap) {
+                $("#column2").fadeIn({
+                    duration: dur, progress: function (a, b, c) {
+                        if (c < dur * overlap) {
+                            $("#column3").fadeIn(dur);
+                        }
+                    }
+                });
+            }
         }
-    }});
+    });
 }
 
 function showContent(content_id) {
@@ -97,26 +101,28 @@ function showContent(content_id) {
     // scalePage();
 
     $("#column3").animate(
-      {scrollTop: 0},
+        {scrollTop: 0},
         {duration: dur * overlap}
     );
     curr_content.fadeOut(
-        {   duration: dur,
-            progress: function(a, b, c) {
-                if ( c < dur * overlap ) {
+        {
+            duration: dur,
+            progress: function (a, b, c) {
+                if (c < dur * overlap) {
                     $("#column3").scrollTop(0);
                     // curr_content.addClass("unflow")
                     // $("#"+content_id).show();
-                    $("#"+content_id).fadeIn(
-                        {   duration:dur,
-                            complete: function() {
-                                $("#"+content_id).addClass("active");
+                    $("#" + content_id).fadeIn(
+                        {
+                            duration: dur,
+                            complete: function () {
+                                $("#" + content_id).addClass("active");
                             }
                         }
                     );
                 }
             },
-            complete: function() {
+            complete: function () {
                 curr_content.removeClass("active");
                 curr_content.hide();
             }
@@ -125,7 +131,7 @@ function showContent(content_id) {
 }
 
 // Code to run when the page is ready
-$(document).ready(function(){
+$(document).ready(function () {
     const root = document.querySelector(':root');
     const total_width = $(window).outerWidth(),
         max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
@@ -150,28 +156,28 @@ $(document).ready(function(){
     // }
 
     $("#column2").append("<ul></ul>");
-    $("#column3 .section").each(function(index){
-        $("#column2 ul").append("<li>"+jQuery.trim($(this).children("h1").text())+"</li>");
-        if ( $(this).attr("id") === "summary" ) {
+    $("#column3 .section").each(function (index) {
+        $("#column2 ul").append("<li>" + jQuery.trim($(this).children("h1").text()) + "</li>");
+        if ($(this).attr("id") === "summary") {
             $(this).addClass("active");
         } else {
-            if ( total_width >= max_width) {
+            if (total_width >= max_width) {
                 $(this).hide();
             }
         }
     });
     // Load any external scripts that are needed.
-    (function() {
-        $.getScript("js/classes.js", function() {
+    (function () {
+        $.getScript("js/classes.js", function () {
             let page_nav = new CVNav("#column2");
         });
     }());
-    $("#links p").mouseenter(function(event) {
-        $(event.delegateTarget).css("cursor","pointer");
+    $("#links p").mouseenter(function (event) {
+        $(event.delegateTarget).css("cursor", "pointer");
         $(event.delegateTarget).addClass("hovered");
     });
-    $("#links p").mouseleave(function(event) {
-        $(event.delegateTarget).css("cursor","auto");
+    $("#links p").mouseleave(function (event) {
+        $(event.delegateTarget).css("cursor", "auto");
         $(event.delegateTarget).removeClass("hovered");
     });
 
@@ -190,14 +196,14 @@ $(document).ready(function(){
 });
 
 // Code to run when the window is resized
-$(window).resize(function(){
+$(window).resize(function () {
     const root = document.querySelector(':root');
     const total_width = $(window).outerWidth(),
-          max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
-    $("#column3 .section").each(function(index){
+        max_width = parseInt(getComputedStyle(root).getPropertyValue('--max-width'));
+    $("#column3 .section").each(function (index) {
         $(this).show();
-        if ( !$(this).hasClass("active") ) {
-            if ( total_width >= max_width) {
+        if (!$(this).hasClass("active")) {
+            if (total_width >= max_width) {
                 $(this).hide();
             }
         }
