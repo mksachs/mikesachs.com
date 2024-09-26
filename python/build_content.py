@@ -29,24 +29,39 @@ class Resume:
 
 """
 
-    def __init__(self, base_html_doc_loc: str, doc_header_template_loc: str):
-        no_title_sections = ['summary']
+    def __init__(self, base_html_doc_loc: str, doc_header_template_loc: str, **kwargs):
+        self.no_title_sections = ['summary']
+        try:
+            self.skip_sections = kwargs['skip_sections']
+        except KeyError:
+            self.skip_sections = []
+
         html_f = open(base_html_doc_loc)
         soup = BeautifulSoup(html_f.read(), 'html.parser')
-        sections = soup('div', class_='section')
+        self.sections_tags = soup('div', class_='section')
 
         doc_header_template_f = open(doc_header_template_loc)
         self.doc_header_template = doc_header_template_f.read()
-
         self.sections = []
-        for section in sections:
-            rs = ResumeSection(section, no_title_sections=no_title_sections)
-            self.sections.append(rs)
 
         html_f.close()
         doc_header_template_f.close()
 
+    def generate(self):
+        if len(self.sections) != 0:
+            self.sections = []
+        for section in self.sections_tags:
+            rs = ResumeSection(section)
+            if rs.section_id not in self.skip_sections:
+                if rs.section_id in self.no_title_sections:
+                    rs.skip_title = True
+                rs.generate()
+                self.sections.append(rs)
+
     def latex(self) -> str:
+        if len(self.sections) == 0:
+            self.generate()
+
         latex_str_list = [self.doc_header_template, '\\begin{document}', self.doc_title_str]
         for section in self.sections:
             latex_str_list.append(section.latex())
@@ -56,20 +71,23 @@ class Resume:
         return ''.join(latex_str_list)
 
 class ResumeSection:
-    def __init__(self, section: bs4.element.Tag, **kwargs):
-        no_title_sections = kwargs['no_title_sections']
-        self.section_title = section.find('h1').get_text(strip=True)
-        self.section_id = section['id']
-
-        self.skip_title = False
-        if self.section_id in no_title_sections:
-            self.skip_title = True
-
-        # print(self.section_title, section_id, self.skip_title)
-
-        subsections = section(class_= 'subsection');
+    def __init__(self, section_tag: bs4.element.Tag, **kwargs):
+        try:
+            self.skip_title = kwargs['skip_title']
+        except KeyError:
+            self.skip_title = False
+        self.section_tag = section_tag
+        self.section_title = self.section_tag.find('h1').get_text(strip=True)
+        self.section_id = self.section_tag['id']
         self.subsections = []
-        for subsection in subsections:
+
+    def generate(self):
+        if len(self.subsections) != 0:
+            self.subsections = []
+
+        subsections_tags = self.section_tag(class_= 'subsection');
+
+        for subsection in subsections_tags:
             try:
                 subsection_type = next(x for x in subsection['class'] if x != 'subsection')
             except StopIteration:
@@ -93,6 +111,8 @@ class ResumeSection:
                     self.subsections.append(ResumeAwards(subsection))
 
     def latex(self) -> str:
+        if len(self.subsections) == 0:
+            self.generate()
         subsections_str = ''
         for subsection in self.subsections:
             subsections_str += subsection.latex()
@@ -355,9 +375,9 @@ def main(argv=None):
     #
     # skip_sections = list(set(skip_sections))
 
-    resume = Resume('index.html', 'tex/templates/doc_header_template.ltx')
+    resume = Resume('../index.html', '../tex/templates/doc_header_template.ltx', skip_sections = ['awards', 'conferences', 'press'])
 
-    out_f = open('tex/MichaelSachs.ltx','w')
+    out_f = open('../tex/pdf.ltx','w')
 
     out_f.write(resume.latex())
     out_f.close()

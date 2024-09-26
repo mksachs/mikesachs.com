@@ -277,44 +277,10 @@ a {
     font-size: var(--col-3-h2-font-size);
 }
 
-/*.job .description {*/
-/*    margin-top: 1.0%;*/
-/*}*/
-
 #column3 h3 {
     font-family: var(--bold-font);
     font-size: var(--col-3-h3-font-size);
 }
-
-/*#column3 h4 {*/
-/*    font-family: 'FuturaT-LightOblique';*/
-/*}*/
-
-/*#column3 h5 {*/
-/*    font-family: 'FuturaT-Demi';*/
-/*}*/
-
-/*.align_right {*/
-/*    text-align: right;*/
-/*}*/
-
-/*#column3 p, #column3 li {*/
-/*    font-family: 'FuturaT-Light';*/
-/*}*/
-
-/*#column3 div > p {*/
-/*    margin: 1.0% 0 1.0% 0;*/
-/*    width: 100%;*/
-/*}*/
-
-/*#publications div > p, #conferences div > p {*/
-/*    margin: 0 0 0 0;*/
-/*}*/
-
-/*#conferences h3 {*/
-/*    margin: 1.4% 0 0 0;*/
-/*}*/
-
 #column3 ul {
     list-style-type: "\2014";
     list-style-position: outside;
@@ -347,16 +313,6 @@ a {
 #publications .title, #conferences .title {
     font-family: var(--bold-font);
 }
-
-/*#conferences p {*/
-/*    margin: 0 0 3% 0;*/
-/*}*/
-
-/*#awards_and_recognition h2 {*/
-/*    font-family: 'FuturaT-Light';*/
-/*}*/
-
-
 
 /* ==========================================================================
    Helper classes
