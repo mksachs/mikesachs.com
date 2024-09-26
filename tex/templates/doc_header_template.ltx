@@ -4,12 +4,12 @@
 \usepackage{xunicode}% provides unicode character macros
 \usepackage{xltxtra} % provides some fixes/extras
 
-\setmainfont[Mapping=tex-text]{Futura T Book}
-\setmonofont[Scale=0.89]{Futura T Book}
+\setmainfont[Mapping=tex-text]{Futura T Light}
+\setmonofont[Scale=0.89]{Futura T Light}
 
-\newfontface\titlefont[LetterSpace=4.0]{Futura T Light}
-\newfontface\boldfont[]{Futura T Demi}
-\newfontface\italicfont[]{Futura T Book Oblique}
+\newfontface\titlefont[]{Futura T Bold Oblique}
+\newfontface\boldfont[]{Futura T Book}
+\newfontface\italicfont[]{Futura T Light Oblique}
 
 \newcommand{\thename}[1]
 {
@@ -19,7 +19,7 @@
 
 \newcommand{\sectiontitle}[1]
 {
-	{\Huge {\titlefont #1}}
+	{\huge {\titlefont #1}}
 	\vspace{\baselineskip}
 }
 
@@ -39,8 +39,13 @@
 	{\italicfont #1}
 }
 
-\newfontface\bulletfont{Futura T Book}
-\def \listbullet {-}
+\newcommand{\subsubsectiontitle}[1]
+{
+	{\Large {\boldfont #1}}
+}
+
+\newfontface\bulletfont{Futura T Light}
+\def \listbullet {–}
 
 % This is a helpful package that puts math inside length specifications
 \usepackage{calc}
@@ -49,7 +54,7 @@
 % (thanks to natbib for inspiration)
 \makeatletter
 \newlength{\bibhang}
-\setlength{\bibhang}{1em}
+\setlength{\bibhang}{0em}
 \newlength{\bibsep}
  {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
 \newenvironment{lonebibsection}%
@@ -124,7 +129,7 @@
 		{\titlefont
         \href{#2}{#3}\\
 		\href{mailto:#4}{#4}\\
-		% \href{mailto:#5}{#5}\\	
+		% \href{mailto:#5}{#5}\\
 		}
 	}
 }
@@ -136,8 +141,8 @@
 	\pagebreak[2]
 	\phantomsection\addcontentsline{toc}{section}{#1}
     \sectiontitle{#1}
-         
-        
+
+
 }
 
 \renewcommand{\subsection}[2]
@@ -146,7 +151,7 @@
 	\ifthenelse{\equal{#2}{}}{
 		\subsectiontitle{#1}
 	}{
-		\href{#2}{ \subsectiontitle{#1}}
+		\hspace{-0.3em}\href{#2}{\subsectiontitle{#1}}
 	}
 }
 
@@ -172,7 +177,7 @@
 % readability of the second example.
 
 % An itemize-style list with lots of space between items
-\newenvironment{outerlist}[1][\enskip\textbullet]%
+\newenvironment{outerlist}[1][\enskip\enskip]%
         {\vspace{-\baselineskip}\begin{itemize}[#1]}{\end{itemize}%
          \vspace{-.6\baselineskip}}
 
@@ -220,18 +225,3 @@
 %%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{document}
-\makeheading{Michael Sachs}
-    {http://www.mikesachs.com}
-    {www.mikesachs.com}
-	{mike@mikesachs.com}
-   % {mksachs@ucdavis.edu}
-
-%\thispagestyle{empty}
-
-%%%%%%%%%%%%%%%%%%%%%%%%% Content Here %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\end{document}
-
-%%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%

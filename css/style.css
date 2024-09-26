@@ -1,0 +1,659 @@
+@import url("../fonts/FuturaT/FuturaT.css");
+
+/*! HTML5 Boilerplate v9.0.1 | MIT License | https://html5boilerplate.com/ */
+
+/* main.css 3.0.0 | MIT License | https://github.com/h5bp/main.css#readme */
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+  color: #222;
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+  resize: vertical;
+}
+
+/* ==========================================================================
+   Author's custom styles
+
+   prop: top right bottom left;
+   available font names:
+        FuturaT-Book
+        FuturaT-BookOblique
+        FuturaT-Bold
+        FuturaT-BoldOblique
+        FuturaT-Demi
+        FuturaT-DemiOblique
+        FuturaT-ExtraBold
+        FuturaT-ExtraBoldOblique
+        FuturaT-Light
+        FuturaT-LightOblique
+        FuturaT-Medium
+        FuturaT-MediumOblique
+
+   ========================================================================== */
+:root {
+    --max-width: 1200px;
+    --top-space: 25vh;
+    --content-height: calc(100vh - var(--top-space));
+    --col-1-width: 15%;
+    --col-1-font-size: 3.125rem;
+    --col-2-font-size: calc(var(--col-1-font-size) * 1 / 1.618);
+    --col-3-font-size: calc(var(--col-2-font-size) * 1 / 1.618);
+    --col-3-h2-font-size: var(--col-2-font-size);
+    --col-3-h3-font-size: calc(var(--col-2-font-size) * 0.7);
+    --main-color: #FB5B1F;
+    --heading-font: 'FuturaT-BoldOblique';
+    --bold-font: 'FuturaT-Book';
+    --body-font: 'FuturaT-Light';
+    --page-fade-in-duration: 0.5s;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    font-family: var(--body-font);
+}
+
+/*#column1, #column2, #column3 {*/
+/*    border: #0f5132 1px solid;*/
+/*}*/
+
+.container {
+    max-width: var(--max-width);
+    display: grid;
+    grid-template-columns: var(--col-1-width) calc(var(--col-1-width) * 1.618) 1fr;
+    grid-template-rows: var(--top-space) var(--content-height);
+    grid-column-gap: 1%;
+    justify-content: stretch;
+    grid-template-areas:
+        "padding padding padding"
+        "header nav content";
+}
+
+#column1 {
+    grid-area: header;
+    justify-self: end;
+    transition-property: opacity;
+    transition-duration: var(--page-fade-in-duration);
+    opacity: 0;
+}
+
+#column1.fadeIn {
+  opacity: 1;
+}
+
+#column2 {
+    grid-area: nav;
+    padding-right: 5%;
+    transition-property: opacity;
+    transition-duration: var(--page-fade-in-duration);
+    transition-delay: calc(var(--page-fade-in-duration) * 0.5);
+    opacity: 0;
+}
+
+#column2.fadeIn {
+  opacity: 1;
+}
+
+#column3 {
+    grid-area: content;
+    overflow: auto;
+    grid-row: 1 / 3;
+    padding-top: var(--top-space);
+    transition-property: opacity;
+    transition-duration: var(--page-fade-in-duration);
+    transition-delay: calc(var(--page-fade-in-duration) * 1);
+    opacity: 0;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    justify-content: stretch;
+}
+
+#column3.fadeIn {
+  opacity: 1;
+}
+
+#column3 .section {
+    margin: 0 0 1rem 0;
+    width: 100%;
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+}
+
+#padding {
+    grid-area: padding;
+}
+
+h1, h2, h3 {
+    font-style: normal;
+    font-weight: normal;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+}
+
+#column1 h1 {
+    font-family: var(--heading-font);
+    color: var(--main-color);
+    font-size: var(--col-1-font-size);
+    text-align: end;
+}
+
+#column1 p {
+    text-align: end;
+}
+
+b {
+    font-family: var(--bold-font);
+    font-style: normal;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration-color: var(--main-color);
+    text-decoration-thickness: .01em;
+    text-underline-offset: 1.5px;
+    color: #41464b;
+}
+
+#column3 h1 {
+    display:none;
+}
+
+#column1 a {
+    color: var(--main-color);
+}
+
+#column2 ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    z-index:0;
+}
+
+#column2 li {
+    font-family: var(--heading-font);
+    text-align: end;
+    color: #9D9D9D;
+    font-size: var(--col-2-font-size);
+}
+
+#column2 li.selected {
+    color: var(--main-color);
+}
+
+#column3 p {
+    margin-top: 0;
+}
+#column3 #summary p {
+    margin-top: 0.5rem;
+    /*padding: 0;*/
+}
+
+#column3 p, #column3 li {
+    font-size: var(--col-3-font-size);
+}
+
+#column3 .subsection {
+    padding: 0 0 0 0;
+    margin: 0.45% 0 5% 0;
+}
+
+#column3 h2 {
+    font-family: var(--heading-font);
+    font-size: var(--col-3-h2-font-size);
+}
+
+#column3 h3 {
+    font-family: var(--bold-font);
+    font-size: var(--col-3-h3-font-size);
+}
+#column3 ul {
+    list-style-type: "\2014";
+    list-style-position: outside;
+    /*text-indent: -1.3em;*/
+    /*margin: 0 0 1.0% 0;*/
+    /*padding: 0 0 0 1em;*/
+}
+
+#column3 li {
+    padding: 0 0 0 1em;
+}
+
+#column3 img {
+    max-width: 100%;
+    height: auto;
+    width: auto\9; /* ie8 */
+    border-style:solid;
+    border-width:1px;
+    border-color:#9D9D9D;
+}
+
+#column3 .caption {
+    margin: 1% 0 0 0;
+}
+
+#column3 .caption a {
+    color:#FB5B1F;
+}
+
+#publications .title, #conferences .title {
+    font-family: var(--bold-font);
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers
+ */
+
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ *
+ * 1. For long content, line feeds are not interpreted as spaces and small width
+ *    causes content to wrap 1 word per line:
+ *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+ */
+
+.visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  /* 1 */
+}
+
+/*
+ * Extends the .visually-hidden class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  white-space: inherit;
+  width: auto;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+  visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * The use of `table` rather than `block` is only necessary if using
+ * `::before` to contain the top-margins of child elements.
+ */
+
+.clearfix::before,
+.clearfix::after {
+  content: "";
+  display: table;
+}
+
+.clearfix::after {
+  clear: both;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: var(--col-1-width) 1fr;
+        grid-template-rows: auto;
+        grid-column-gap: 5%;
+        justify-content: stretch;
+        width: 100vw;
+        grid-template-areas:
+            "header content";
+        margin-left: 8em;
+        padding-top: calc(var(--top-space) * 0.5);
+    }
+
+    #column3 h1 {
+        font-family: var(--heading-font);
+        font-size: calc(var(--col-3-font-size) * 2);
+    }
+
+    #column3 h2 {
+        font-size: calc(var(--col-3-font-size) * 1.3);
+    }
+
+    #column3 h3 {
+        font-size: calc(var(--col-3-font-size) * 1.1);
+    }
+
+    #column3 {
+        grid-area: content;
+        overflow: auto;
+        grid-row: initial;
+        padding-top: 0;
+        transition-property: opacity;
+        transition-duration: var(--page-fade-in-duration);
+        transition-delay: calc(var(--page-fade-in-duration) * 0.5);
+        opacity: 0;
+
+        display: initial;
+    }
+
+    #column3 .section {
+        margin: 0 0 2rem 0;
+        width: 100%;
+    }
+
+    #column2 {
+        display: none;
+    }
+
+    #column3 h1 {
+        display: initial;
+    }
+
+    #column3 #summary h1 {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+/* For mobile phones: */
+    .container {
+        max-width: none;
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: auto auto;
+        /*grid-column-gap: 1%;*/
+        justify-content: stretch;
+        grid-template-areas:
+            "header"
+            "content";
+        margin-left: 1em;
+    }
+
+    #column1 {
+        justify-self: start;
+    }
+
+    #column1 p {
+        text-align: start;
+    }
+
+    #column3 h1 {
+        font-family: var(--heading-font);
+        font-size: calc(var(--col-3-font-size) * 2);
+    }
+
+    #column3 h2 {
+        font-size: calc(var(--col-3-font-size) * 1.3);
+    }
+
+    #column3 h3 {
+        font-size: calc(var(--col-3-font-size) * 1.1);
+    }
+
+    #column3 {
+        grid-area: content;
+        overflow: auto;
+        grid-row: initial;
+        padding-top: 0;
+        transition-property: opacity;
+        transition-duration: var(--page-fade-in-duration);
+        transition-delay: calc(var(--page-fade-in-duration) * 0.5);
+        opacity: 0;
+
+        display: block;
+    }
+
+    #column3 .section {
+        margin: 0 0 2rem 0;
+        width: 100%;
+    }
+
+    #column2 {
+        display: none;
+    }
+
+    #column3 h1 {
+        display: initial;
+    }
+
+    #column3 #summary h1 {
+        display: none;
+    }
+}
+
+@media print,
+  (-webkit-min-device-pixel-ratio: 1.25),
+  (min-resolution: 1.25dppx),
+  (min-resolution: 120dpi) {
+  /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid the additional HTTP request:
+   https://www.phpied.com/delay-loading-your-print-css/
+   ========================================================================== */
+
+@media print {
+  body {
+      justify-content: start;
+  }
+  .container {
+        max-width: 1024px;
+        display: grid;
+        grid-template-columns: 300px calc(1024px - 300px);
+        grid-template-rows: auto;
+        grid-column-gap: 5%;
+        justify-content: stretch;
+        width: 1024px;
+        grid-template-areas:
+            "header content";
+        margin-left: 15em;
+        margin-right: 15em;
+        padding-top: calc(var(--top-space) * 0.7);
+    }
+
+    #column3 h1 {
+        font-family: var(--heading-font);
+        font-size: calc(var(--col-3-font-size) * 2);
+    }
+
+    #column3 h2 {
+        font-size: calc(var(--col-3-font-size) * 1.3);
+    }
+
+    #column3 h3 {
+        font-size: calc(var(--col-3-font-size) * 1.1);
+    }
+
+    #column3 {
+        grid-area: content;
+        overflow: auto;
+        grid-row: initial;
+        padding-top: 0;
+        transition-property: opacity;
+        transition-duration: var(--page-fade-in-duration);
+        transition-delay: calc(var(--page-fade-in-duration) * 0.5);
+        opacity: 0;
+
+        display: initial;
+    }
+
+    #column3 .section {
+        margin: 0 0 2rem 0;
+        width: 100%;
+    }
+
+    #column2 {
+        display: none;
+    }
+
+    #column3 h1 {
+        display: initial;
+    }
+
+    #column3 #summary h1 {
+        display: none;
+    }
+
+  *,
+  *::before,
+  *::after {
+    background: #fff !important;
+    color: #000 !important;
+    /* Black prints faster */
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+
+  /*
+   * Don't show links that are fragment identifiers,
+   * or use the `javascript:` pseudo protocol
+   */
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+
+  pre {
+    white-space: pre-wrap !important;
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
