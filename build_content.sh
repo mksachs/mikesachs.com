@@ -57,6 +57,6 @@ rm tex/*.log
 # Synch with the server.
 #
 
-#rsync -avhL --delete --exclude-from 'exclude-list.txt' "$BASEDIR"/ mksachs@habersham.dreamhost.com:mikesachs.com
+#rsync -avhL --delete --exclude-from 'exclude-list.txt' "$BASEDIR"/ mksachs@iad1-shared-b8-17.dreamhost.com
 
 pyenv deactivate

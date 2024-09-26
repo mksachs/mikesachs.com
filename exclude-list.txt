@@ -12,3 +12,10 @@ cover_letters
 .gitignore
 .idea
 python
+css/styles.css.map
+css/styles.css
+node_modules
+rwd
+.editorconfig
+.gitattributes
+build_content.sh
