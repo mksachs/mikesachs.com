@@ -18,4 +18,5 @@ node_modules
 rwd
 .editorconfig
 .gitattributes
-build_content.sh
+build.sh
+deploy.sh
