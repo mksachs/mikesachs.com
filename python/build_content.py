@@ -15,7 +15,15 @@ def latex_escape(text, abbrev=False):
                 text = tmp_text[0:-2]
             else:
                 text = tmp_text
-        return '\\%'.join('\\&'.join('\\#'.join('\\_'.join(text.split('_')).split('#')).split('&')).split('%'))
+        return '\\$'.join('\\%'.join(
+            '\\&'.join(
+                '\\#'.join(
+                    '\\_'.join(
+                        text.split('_')
+                    ).split('#')
+                ).split('&')
+            ).split('%')
+        ).split('$'))
     else:
         return ''
 
@@ -301,10 +309,18 @@ class ResumeJob:
         self.org = job_tag.find(class_='org').get_text(strip=True)
         self.title = job_tag.find(class_='title').get_text(strip=True)
         self.dates = job_tag.find(class_='dates').get_text(strip=True)
-        self.description_text = job_tag.find('p', class_='description').get_text(strip=True)
-        self.description_list = []
+        self._description_text = job_tag.find('p', class_='description').get_text(strip=True)
+        self._description_list = []
         for li in job_tag.find('ul', class_='description')('li'):
-            self.description_list.append(li.get_text(strip=True))
+            self._description_list.append(li.get_text(strip=True))
+
+    @property
+    def description_text(self):
+        return latex_escape(self._description_text)
+
+    @property
+    def description_list(self):
+        return [latex_escape(x) for x in self._description_list]
 
     def latex(self) -> str:
         description_list_str = ''

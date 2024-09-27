@@ -178,7 +178,7 @@
 
 % An itemize-style list with lots of space between items
 \newenvironment{outerlist}[1][\enskip\enskip]%
-        {\vspace{-\baselineskip}\begin{itemize}[#1]}{\end{itemize}%
+        {\vspace{-\baselineskip}\begin{itemize}[#1]\setlength{\itemsep}{4pt}}{\end{itemize}%
          \vspace{-.6\baselineskip}}
 
 % An environment IDENTICAL to outerlist that has better pre-list spacing
