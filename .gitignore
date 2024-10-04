@@ -73,3 +73,7 @@ css/styles.css
 /cover_letters/
 
 .htaccess
+
+credentials.json
+token.json
+doctest.py

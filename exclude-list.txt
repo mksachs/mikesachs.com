@@ -20,3 +20,6 @@ rwd
 .gitattributes
 build.sh
 deploy.sh
+credentials.json
+token.json
+doctest.py
