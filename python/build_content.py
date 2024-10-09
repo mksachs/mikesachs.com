@@ -311,8 +311,10 @@ class ResumeJob:
         self.dates = job_tag.find(class_='dates').get_text(strip=True)
         self._description_text = job_tag.find('p', class_='description').get_text(strip=True)
         self._description_list = []
-        for li in job_tag.find('ul', class_='description')('li'):
-            self._description_list.append(li.get_text(strip=True))
+        ul = job_tag.find('ul', class_='description')
+        if ul is not None:
+            for li in ul('li'):
+                self._description_list.append(li.get_text(strip=True))
 
     @property
     def description_text(self):
@@ -391,7 +393,7 @@ def main(argv=None):
     #
     # skip_sections = list(set(skip_sections))
 
-    resume = Resume('../index.html', '../tex/templates/doc_header_template.ltx', skip_sections = ['awards', 'conferences', 'press'])
+    resume = Resume('../index.html', '../tex/templates/doc_header_template.ltx', skip_sections = ['awards', 'conferences', 'press', 'publications'])
 
     out_f = open('../tex/pdf.ltx','w')
 
