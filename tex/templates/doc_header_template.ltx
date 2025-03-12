@@ -112,6 +112,8 @@
 %            anchorcolor=orange,citecolor=orange}
 
 \usepackage{ifthen}
+
+\pagenumbering{gobble}
 %%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -126,11 +128,11 @@
 {
 	\marginpar{
 		\thename{#1}\\
-		{\titlefont
+		{\small {\titlefont
         \href{#2}{#3}\\
 		\href{mailto:#4}{#4}\\
-		% \href{mailto:#5}{#5}\\
-		}
+		#5\\
+		}}
 	}
 }
 

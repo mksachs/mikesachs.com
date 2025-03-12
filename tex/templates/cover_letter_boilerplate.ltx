@@ -4,12 +4,12 @@
 \usepackage{xunicode}% provides unicode character macros
 \usepackage{xltxtra} % provides some fixes/extras
 
-\setmainfont[Mapping=tex-text]{Futura T Book}
-\setmonofont[Scale=0.89]{Futura T Book}
+\setmainfont[Mapping=tex-text]{Futura T Light}
+\setmonofont[Scale=0.89]{Futura T Light}
 
-\newfontface\titlefont[LetterSpace=4.0]{Futura T Light}
-\newfontface\boldfont[]{Futura T Demi}
-\newfontface\italicfont[]{Futura T Book Oblique}
+\newfontface\titlefont[]{Futura T Bold Oblique}
+\newfontface\boldfont[]{Futura T Book}
+\newfontface\italicfont[]{Futura T Light Oblique}
 
 \newcommand{\thename}[1]
 {
@@ -19,7 +19,7 @@
 
 \newcommand{\sectiontitle}[1]
 {
-	{\Huge {\titlefont #1}}
+	{\huge {\titlefont #1}}
 	\vspace{\baselineskip}
 }
 
@@ -39,8 +39,13 @@
 	{\italicfont #1}
 }
 
-\newfontface\bulletfont{Futura T Book}
-\def \listbullet {-}
+\newcommand{\subsubsectiontitle}[1]
+{
+	{\Large {\boldfont #1}}
+}
+
+\newfontface\bulletfont{Futura T Light}
+\def \listbullet {–}
 
 % This is a helpful package that puts math inside length specifications
 \usepackage{calc}
@@ -49,7 +54,7 @@
 % (thanks to natbib for inspiration)
 \makeatletter
 \newlength{\bibhang}
-\setlength{\bibhang}{1em}
+\setlength{\bibhang}{0em}
 \newlength{\bibsep}
  {\@listi \global\bibsep\itemsep \global\advance\bibsep by\parsep}
 \newenvironment{lonebibsection}%
@@ -107,6 +112,8 @@
 %            anchorcolor=orange,citecolor=orange}
 
 \usepackage{ifthen}
+
+\pagenumbering{gobble}
 %%%%%%%%%%%%%%%%%%%%%%%% End Document Setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -121,11 +128,11 @@
 {
 	\marginpar{
 		\thename{#1}\\
-		{\titlefont
+		{\small {\titlefont
         \href{#2}{#3}\\
 		\href{mailto:#4}{#4}\\
-		% \href{mailto:#5}{#5}\\
-        #5\\	}
+		#5\\
+		}}
 	}
 }
 
@@ -136,8 +143,8 @@
 	\pagebreak[2]
 	\phantomsection\addcontentsline{toc}{section}{#1}
     \sectiontitle{#1}
-         
-        
+
+
 }
 
 \renewcommand{\subsection}[2]
@@ -146,7 +153,7 @@
 	\ifthenelse{\equal{#2}{}}{
 		\subsectiontitle{#1}
 	}{
-		\href{#2}{ \subsectiontitle{#1}}
+		\hspace{-0.3em}\href{#2}{\subsectiontitle{#1}}
 	}
 }
 
@@ -172,8 +179,8 @@
 % readability of the second example.
 
 % An itemize-style list with lots of space between items
-\newenvironment{outerlist}[1][\enskip\textbullet]%
-        {\vspace{-\baselineskip}\begin{itemize}[#1]}{\end{itemize}%
+\newenvironment{outerlist}[1][\enskip\enskip]%
+        {\vspace{-\baselineskip}\begin{itemize}[#1]\setlength{\itemsep}{4pt}}{\end{itemize}%
          \vspace{-.6\baselineskip}}
 
 % An environment IDENTICAL to outerlist that has better pre-list spacing
@@ -191,8 +198,8 @@
 % An environment IDENTICAL to innerlist that has better pre-list spacing
 % when used as the first thing in a \section
 \newenvironment{loneinnerlist}[1][\enskip\listbullet]%
-        {\vspace{-\baselineskip}\begin{compactitem}[#1]}
-        {\end{compactitem}\vspace{-.6\baselineskip}}
+        {\vspace{-.5\baselineskip}\begin{compactitem}[#1]}
+        {\end{compactitem}\vspace{0.1\baselineskip}}
 
 % To add some paragraph space between lines.
 % This also tells LaTeX to preferably break a page on one of these gaps
@@ -220,26 +227,42 @@
 %%%%%%%%%%%%%%%%%%%%%%%% End Helper Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Begin CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}\makeheading{Michael Sachs}
+        {http://www.mikesachs.com}
+        {www.mikesachs.com}
+        {mike@mikesachs.com}
+        {646-262-8530}
 
-\begin{document}
-\makeheading{Michael Sachs}
-    {http://www.mikesachs.com}
-    {www.mikesachs.com}
-	{mike@mikesachs.com}
-    % {mksachs@ucdavis.edu}
-    {646.262.8530}
 
-\thispagestyle{
-Please accept my resume and coverletter as application for the role of XX at XX. I believe my unique mix of skills and experience will make me an excellent addition to your organization. I am a currently the Director of Technology and Data at Discovery Digital Networks, a role in which I am both a tech leader and a data scientist. I am also a PhD physicist and visual artist and designer. I have led creative and tech teams, been part of technology start-ups, and consulted with companies both large and small. My work has been published in scientific journals, covered by the popular science press, and I have given talks at scientific conferences in Hawaii, Singapore, San Francisco, Santa Fe and New York. I studied physics at Columbia University and the University of California, Davis, and visual design at Virginia Commonwealth University. I am a NASA Earth and Space Science fellow and a Santa Fe Institute Complex Systems Summer School alumni.
 
-\vspace{\baselineskip}
+% Section
+Dear Apple Hiring Team,
+\vspace{0.7\baselineskip}
 
-Most importantly though, I love telling stories with data -- or rather listening to the stories that data have to tell-- whether its the performance of YouTube videos or the results of earthquake simulators. The idea that there is a narrative buried in an ocean of information captivates me. It's as if these complex systems, sometimes comprised of thousands or even millions of interacting parts, are trying to tell us how they are more than just the sum of their parts, and every mountain of data is an opportunity to listen and understand.
 
-}
-
+I have been an Apple enthusiast for as long as I can remember. The first computer I ever bought was a Power Macintosh 7100. The opportunity to help build such amazing products as Senior Data Science Manager, AIML Data is very exciting. I think my passion for Apple’s products, experience using data to drive product improvements at scale, and success as an organizational leader make me a great fit for the role.
+\vspace{0.7\baselineskip}
+
+
+I spent the last four years at Netflix, where my team was responsible for analytics, data science, and ML and algos for Netflix’s infrastructure. My team’s goal was to build data products designed to improve the quality, efficiency and reliability of Netflix, in partnership with product and engineering teams. Under my leadership, the team championed the use of experimentation within the streaming delivery platform and designed AB and quasi experimentation frameworks to democratize experimentation and make it part of the product culture in streaming delivery. My team also developed Netflix scale data collection, at very high resolution, to identify patterns in Netflix’s global streaming footprint, and to guide development of new streaming technologies. In addition to leading my team, I also pioneered the cross-functional effort to develop analytics, quality metrics and experimentation infrastructure for Netflix’s cloud gaming platform when the company expanded into games, and led the effort to develop a product-wide culture of efficiency by democratizing AWS cost and usage data.
+\vspace{0.7\baselineskip}
+
+
+My career highlight at Netflix was building the ML for Systems discipline. Applying algos and ML to infrastructure problems wasn’t new for Netflix, but there was never a formal discipline around doing so. I developed a charter for this work and grew the team that became responsible for: optimization code that steers Netflix AWS traffic, ML models that do VPN detection globally, handle workload placement in AWS and optimize Spark job configuration, and algos that predict Live event traffic for service scaling.
+\vspace{0.1\baselineskip}}
+
+
+Prior to Netflix, I worked at two startups, FLYR and Radius, as well as at Discovery Digital Networks, a startup-of-sorts within Discovery Communications. At FLYR, I built a culture of data-driven product development by aligning the company around metrics that measured the quality of decisions that the algos at the heart of the product were making. At Radius, I built the team that pioneered using ML to evaluate the quality and accuracy of the data set at the core of Radius’s product. At Discovery Digital Networks, I was the first data hire, and eventually led a team that established the practice of data driven decision making, including using signals from models and algos to guide production decisions. Building and leading high performance teams and using data to drive decision-making and product improvements are things I have done in every role I have been in over the last 10 years.
+\vspace{0.7\baselineskip}
+
+
+Working at Apple would be a dream job for me. It’s hard to think of another company whose products I have had such a great relationship with for so long. I also believe that my experience leading data science for infrastructure at Netflix, combined with my demonstrated success leading high-performance teams and collaborating cross-functionally to solve complex technical problems at scale, make me an excellent candidate for the Senior Data Science Manager, AIML Data at Apple. I'm looking forward to continuing the conversation with you.
+\vspace{0.7\baselineskip}
+
+
+Sincerely
+
+Michael Sachs
 
 \end{document}
-
 %%%%%%%%%%%%%%%%%%%%%%%%% End CV Document %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
