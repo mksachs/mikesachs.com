@@ -1,6 +1,5 @@
 import sys
 import argparse
-import re
 
 import bs4
 from bs4 import BeautifulSoup
@@ -111,6 +110,8 @@ class ResumeSection:
                 self.subsections.append(ResumeConference(subsection))
             elif subsection_type == 'news-outlet':
                 self.subsections.append(ResumePress(subsection))
+            elif subsection_type == 'space':
+                self.subsections.append(ResumeSpace(subsection))
             elif subsection_type is None:
                 if self.section_id == 'summary':
                     self.subsections.append(ResumeSummary(subsection))
@@ -128,7 +129,7 @@ class ResumeSection:
         latex_str = '% Section\n'
         end_bibsection = ''
         if not self.skip_title:
-            latex_str += f'\\section{{{self.section_title}}}\n'
+            latex_str += f'\\section{{{self.section_title}}}\n\n'
             if self.section_id == 'publications':
                 latex_str += '\n\\begin{bibsection}\n'
                 end_bibsection = '\\end{bibsection}\n\\vspace{1.5\\baselineskip}\n\n'
@@ -136,6 +137,16 @@ class ResumeSection:
         latex_str += f'{subsections_str}{end_bibsection}\\vspace{{\\baselineskip}}\n'
 
         return latex_str
+
+class ResumeSpace:
+
+    def __init__(self, space_tag: bs4.element.Tag):
+        self.space_height = float(space_tag['class'][-1])
+
+    def latex(self) -> str:
+        return f"""\\vspace{{{self.space_height:.1f}\\baselineskip}}
+
+"""
 
 class ResumePress:
 
@@ -308,11 +319,28 @@ class ResumeJob:
 
     def __init__(self, job_tag: bs4.element.Tag):
         self.org = job_tag.find(class_='org').get_text(strip=True)
-        self.title = job_tag.find(class_='title').get_text(strip=True)
-        self.dates = job_tag.find(class_='dates').get_text(strip=True)
-        self._description_text = job_tag.find('p', class_='description').get_text(strip=True)
+        self.roles = [ResumeRole(x) for x in job_tag.find_all(class_='role')]
+
+    def latex(self) -> str:
+        latex_str = f"""% Subsection
+\\subsection{{{self.org}}}{{}}
+
+"""
+        for role in self.roles:
+            latex_str += f"{role.latex()}"
+
+        latex_str += '\\vspace{{0.5\\baselineskip}}\n\n'
+
+        return latex_str
+
+class ResumeRole:
+
+    def __init__(self, role_tag: bs4.element.Tag):
+        self.title =  role_tag.find(class_='title').get_text(strip=True)
+        self.dates = role_tag.find(class_='dates').get_text(strip=True)
+        self._description_text = role_tag.find('p', class_='description').get_text(strip=True)
         self._description_list = []
-        ul = job_tag.find('ul', class_='description')
+        ul = role_tag.find('ul', class_='description')
         if ul is not None:
             for li in ul('li'):
                 self._description_list.append(li.get_text(strip=True))
@@ -326,14 +354,12 @@ class ResumeJob:
         return [latex_escape(x) for x in self._description_list]
 
     def latex(self) -> str:
+
         description_list_str = ''
         for li in self.description_list:
             description_list_str += f'\\item[\\listbullet] {li}\n'
-        latex_str = f"""% Subsection
-\\subsection{{{self.org}}}{{}}
-
-\\subsubsectiontitle{{{self.title}}}\\\\
-\\subsubsectiontitle{{{self.dates}}}\\\\
+        latex_str = f"""\\subsubsectiontitle{{{self.title}}}\\\\
+\\subsubsectionsubtitle{{{self.dates}}}\\\\
 
 {self.description_text}
 
@@ -342,7 +368,7 @@ class ResumeJob:
 \\begin{{outerlist}}
 {description_list_str}\\end{{outerlist}}
 
-\\vspace{{1.5\\baselineskip}}
+\\vspace{{\\baselineskip}}
 
 """
         return latex_str

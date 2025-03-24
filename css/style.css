@@ -281,6 +281,12 @@ a {
     font-family: var(--bold-font);
     font-size: var(--col-3-h3-font-size);
 }
+
+#column3 .dates {
+    font-family: var(--body-font);
+    float: right;
+}
+
 #column3 ul {
     list-style-type: "\2014";
     list-style-position: outside;
@@ -290,7 +296,7 @@ a {
 }
 
 #column3 li {
-    padding: 0 0 0 1em;
+    padding: 0 0 1em 1em;
 }
 
 #column3 img {
@@ -441,6 +447,11 @@ a {
     #column3 .section {
         margin: 0 0 2rem 0;
         width: 100%;
+    }
+
+    #column3 .dates {
+        float: none;
+        display: block;
     }
 
     #column2 {
