@@ -338,7 +338,10 @@ class ResumeRole:
     def __init__(self, role_tag: bs4.element.Tag):
         self.title =  role_tag.find(class_='title').get_text(strip=True)
         self.dates = role_tag.find(class_='dates').get_text(strip=True)
-        self._description_text = role_tag.find('p', class_='description').get_text(strip=True)
+        try:
+            self._description_text = role_tag.find('p', class_='description').get_text(strip=True)
+        except AttributeError:
+            self._description_text = ''
         self._description_list = []
         ul = role_tag.find('ul', class_='description')
         if ul is not None:
@@ -360,15 +363,19 @@ class ResumeRole:
             description_list_str += f'\\item[\\listbullet] {li}\n'
         latex_str = f"""\\subsubsectiontitle{{{self.title}}}\\\\
 \\subsubsectionsubtitle{{{self.dates}}}\\\\
-
+"""
+        if self.description_text != '':
+            latex_str +=f"""
 {self.description_text}
+"""
 
+        latex_str += f"""
 \\vspace{{\\baselineskip}}
 
 \\begin{{outerlist}}
-{description_list_str}\\end{{outerlist}}
+{description_list_str}\\end{{outerlist}}\\\\
 
-\\vspace{{\\baselineskip}}
+\\vspace{{1.5\\baselineskip}}
 
 """
         return latex_str
