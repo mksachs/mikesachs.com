@@ -280,8 +280,10 @@ class ResumeSchool:
         self.degree_date = job_tag.find(class_='degree_date').get_text(strip=True)
         # self.description_list = job_tag.find(class_='description').get_text(strip=True)
         self.description_list = []
-        for li in job_tag.find('ul', class_='description')('li'):
-            self.description_list.append(latex_escape(li.get_text(strip=True)))
+        ul = job_tag.find('ul', class_='description')
+        if ul is not None:
+            for li in ul('li'):
+                self.description_list.append(latex_escape(li.get_text(strip=True)))
 
     def latex(self) -> str:
         description_list_str = ''
@@ -381,12 +383,40 @@ class ResumeRole:
         return latex_str
 
 class ResumeSummary:
-    def __init__(self, job_tag: bs4.element.Tag):
-        self.summary = job_tag.get_text(strip=True)
+    def __init__(self, summary_tag: bs4.element.Tag):
+        self.highlight_title = summary_tag.find('b').get_text(strip=True)
+        try:
+            self._summary_text = summary_tag.find('p').get_text(strip=True)
+        except AttributeError:
+            self._summary_text = ''
+        self._highlight_list = []
+        ul = summary_tag.find('ul')
+        if ul is not None:
+            for li in ul('li'):
+                self._highlight_list.append(li.get_text(strip=True))
+
+    @property
+    def summary_text(self):
+        return latex_escape(self._summary_text)
+
+    @property
+    def highlight_list(self):
+        return [latex_escape(x) for x in self._highlight_list]
 
     def latex(self) -> str:
-        latex_str = f"""{self.summary}
+
+        highlight_list_str = ''
+        for li in self.highlight_list:
+            highlight_list_str += f'\\item[\\listbullet] {li}\n'
+        latex_str = f"""{self.summary_text}\\\\
+
+\\bf{{{self.highlight_title}}}\\\\
+
+\\begin{{outerlist}}
+{highlight_list_str}\\end{{outerlist}}\\\\
+
 \\vspace{{1.5\\baselineskip}}
+
 
 """
         return latex_str
